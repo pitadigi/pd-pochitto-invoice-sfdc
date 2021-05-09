@@ -3,7 +3,7 @@
     <fullName>ClientId__c</fullName>
     <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
-    <label>クライアントID</label>
+    <label>ClientId</label>
     <length>80</length>
     <required>false</required>
     <type>Text</type>

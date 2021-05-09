@@ -12,3 +12,10 @@ package.xml
 **/__tests__/**
 
 **/customMetadata**
+**/duplicateRules/**
+**/layouts/Account-**
+**/layouts/Contact-**
+**/layouts/Contract-**
+**/layouts/OrderItem-**
+**/layouts/PricebookEntry-**
+**/profiles/**

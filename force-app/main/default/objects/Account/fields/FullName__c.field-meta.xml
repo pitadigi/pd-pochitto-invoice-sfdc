@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>GrantType__c</fullName>
+    <fullName>FullName__c</fullName>
     <externalId>false</externalId>
-    <fieldManageability>DeveloperControlled</fieldManageability>
-    <label>GrantType</label>
+    <label>正式名称</label>
     <length>80</length>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <type>Text</type>
     <unique>false</unique>
 </CustomField>

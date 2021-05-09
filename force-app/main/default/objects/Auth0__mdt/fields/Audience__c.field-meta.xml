@@ -3,7 +3,7 @@
     <fullName>Audience__c</fullName>
     <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
-    <label>API</label>
+    <label>Audience</label>
     <length>80</length>
     <required>false</required>
     <type>Text</type>

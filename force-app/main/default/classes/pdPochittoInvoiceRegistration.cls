@@ -1,11 +1,11 @@
-@RestResource(urlMapping='/pi/*')
+@RestResource(urlMapping='/pochitto_invoice/*')
 global with sharing class pdPochittoInvoiceRegistration {
     public virtual class BaseException extends Exception {}
     public class OtherException extends BaseException {}
 
     /**
      * ポチッと請求の申込情報を登録する
-     * @params customer
+     * @param customer
      * {
      *   "Company": "会社名",
      *   "Department": "部署",
@@ -39,6 +39,12 @@ global with sharing class pdPochittoInvoiceRegistration {
      *   "Tags": "タグ",
      *   "Satori": "SATORI URL",
      * }
+     * 
+     * @returns
+     * {
+     *   result: true / false
+     *   message: エラーメッセージ
+     * }
      */
     @HttpPost
     global static String regist(String customer) {
@@ -50,10 +56,13 @@ global with sharing class pdPochittoInvoiceRegistration {
 
             Map<String, Object> mapCustomer = (Map<String, Object>)JSON.deserializeUntyped(customer);
 
-            pdPochittoInvoiceRegistration.createUserOfAuth0(contractId, (String)mapCustomer.get('Email'), (String)mapCustomer.get('Company'));
-            pdPochittoInvoiceRegistration.buildUserEnv(contractId);
+            Boolean result = pdPochittoInvoiceRegistration.createUserOfAuth0(contractId, (String)mapCustomer.get('Email'), (String)mapCustomer.get('Company'));
+
+            if (result) {
+                pdPochittoInvoiceRegistration.buildUserEnv(contractId);
     
-            pdPochittoInvoiceRegistration.registContract(mapCustomer);
+                pdPochittoInvoiceRegistration.registContract(contractId, mapCustomer);
+            }
 
             jsonResult.writeBooleanField('result', true);
             jsonResult.writeStringField('message', '');
@@ -76,7 +85,7 @@ global with sharing class pdPochittoInvoiceRegistration {
      * * 同じ取引先責任者が存在しなければ追加する ※SATORIでチェックできないので保留
      * * 取引先に対して契約を作成する(状況はトライアル)
      */
-    private static void registContract(Map<String, Object> mapCustomer) {
+    private static void registContract(String contractId, Map<String, Object> mapCustomer) {
         Account account;
         Contact contact;
 
@@ -97,9 +106,9 @@ global with sharing class pdPochittoInvoiceRegistration {
         companyFullName = companyFullName.replace('(有)', '有限会社');
 
         List<Contact> lstContact = [SELECT Id,LastName,FirstName,MailingPostalCode,MailingState,MailingCity,MailingStreet,
-                                    Email,Phone,Fax,Title,AccountId,Department 
+                                    Email,Phone,Fax,Title,AccountId,Department,NameKana__c
                                     FROM Contact 
-                                    WHERE Email=:(String)mapCustomer.get('EMail')
+                                    WHERE Email=:(String)mapCustomer.get('Email')
                                     ORDER BY LastModifiedDate DESC];
         if (lstContact.size() != 0) {
             contact = lstContact[0];
@@ -136,6 +145,7 @@ global with sharing class pdPochittoInvoiceRegistration {
         contact.Department = (String)mapCustomer.get('Department');
         contact.SatoriUrl__c = (String)mapCustomer.get('Satori');
         contact.SatoriTags__c = (String)mapCustomer.get('Tags');
+        contact.NameKana__c = (String)mapCustomer.get('LastNameKana') + ' ' + (String)mapCustomer.get('FirstNameKana');
         contact.AccountId = account.Id;
         upsert contact;
 
@@ -161,6 +171,7 @@ global with sharing class pdPochittoInvoiceRegistration {
         contract.CustomerSignedTitle = contact.Title;
         contract.Pricebook2Id = priceBook2.Id;
         contract.Type__c = '月額';
+        contract.ContractId__c = contractId;
         insert contract;
 
         Order order = new Order();
@@ -193,7 +204,7 @@ global with sharing class pdPochittoInvoiceRegistration {
      * Auth0のユーザIDを作成する
      * * ユーザがすでに存在する場合はエラーにしない(ステータスコード = 409)
      */
-    private static void createUserOfAuth0(String contractId, String email, String companyName) {
+    private static Boolean createUserOfAuth0(String contractId, String email, String companyName) {
         String accessToken = pdPochittoInvoiceRegistration.getAccessToken('Management');
         String password = pdPochittoInvoiceRegistration.createContractId();
         password += '@PI';
@@ -224,10 +235,14 @@ global with sharing class pdPochittoInvoiceRegistration {
         req.setBody(data.getAsString());
 
         HttpResponse res = http.send(req);
-        if (res.getStatusCode() != 201
-            && res.getStatusCode() != 409) {
+        if(res.getStatusCode() == 409) {
+            return false;
+        }
+        else if (res.getStatusCode() != 201) {
             throw new OtherException(pdPochittoInvoiceRegistration.getApiErrorMessage(res.getBody()));
         }
+
+        return true;
     }
 
     /**
@@ -235,7 +250,6 @@ global with sharing class pdPochittoInvoiceRegistration {
      */
     private static void buildUserEnv(String contractId) {
         String accessToken = pdPochittoInvoiceRegistration.getAccessToken('API');
-        system.debug(accessToken);
 
         Http http = new Http();
         HttpRequest req = new HttpRequest();

@@ -56,7 +56,7 @@ class pdPochittoInvoiceRegistration_test {
         RestRequest req = new RestRequest();
         RestResponse res = new RestResponse();
 
-        req.requestURI = '/services/apexrest/pi';
+        req.requestURI = '/services/apexrest/pi-regist/';
         req.httpMethod = 'POST';
         req.requestBody = Blob.valueOf(JSON.serialize(testParam));
 

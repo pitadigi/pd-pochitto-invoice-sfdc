@@ -56,10 +56,10 @@ global with sharing class pdPochittoInvoiceRegistration {
 
             Map<String, Object> mapCustomer = (Map<String, Object>)JSON.deserializeUntyped(customer);
 
-            Boolean result = pdPochittoInvoiceRegistration.createUserOfAuth0(contractId, (String)mapCustomer.get('Email'), (String)mapCustomer.get('Company'));
+            Boolean result = pdPochittoInvoiceAuth0.createUserOfAuth0(contractId, (String)mapCustomer.get('Email'), (String)mapCustomer.get('Company'));
 
             if (result) {
-                pdPochittoInvoiceRegistration.buildUserEnv(contractId);
+                pdPochittoInvoiceAzure.buildUserEnv(contractId);
     
                 pdPochittoInvoiceRegistration.registContract(contractId, mapCustomer);
             }
@@ -201,114 +201,6 @@ global with sharing class pdPochittoInvoiceRegistration {
     }
 
     /**
-     * Auth0のユーザIDを作成する
-     * * ユーザがすでに存在する場合はエラーにしない(ステータスコード = 409)
-     */
-    private static Boolean createUserOfAuth0(String contractId, String email, String companyName) {
-        String accessToken = pdPochittoInvoiceRegistration.getAccessToken('Management');
-        String password = pdPochittoInvoiceRegistration.createContractId();
-        password += '@PI';
-
-        Http http = new Http();
-        HttpRequest req = new HttpRequest();
-        req.setMethod('POST');
-        req.setEndpoint('callout:Auth0/api/v2/users');
-        req.setHeader('content-type', 'application/json');
-        req.setHeader('authorization', accessToken);
-        
-        JSONGenerator data = JSON.createGenerator(false);
-        data.writeStartObject();
-        data.writeStringField('email', email);
-        data.writeStringField('name', contractId);
-        data.writeStringField('connection', 'pd-pochitto-invoice');
-        data.writeStringField('password', password);
-        data.writeBooleanField('verify_email', true);
-        data.writeFieldName('app_metadata');
-        data.writeStartObject();
-        data.writeStringField('contract_id', contractId);
-        data.writeEndObject();
-        data.writeFieldName('user_metadata');
-        data.writeStartObject();
-        data.writeStringField('company_name', companyName);
-        data.writeEndObject();
-        data.writeEndObject();
-        req.setBody(data.getAsString());
-
-        HttpResponse res = http.send(req);
-        if(res.getStatusCode() == 409) {
-            return false;
-        }
-        else if (res.getStatusCode() != 201) {
-            throw new OtherException(pdPochittoInvoiceRegistration.getApiErrorMessage(res.getBody()));
-        }
-
-        return true;
-    }
-
-    /**
-     * Azureのユーザ環境を構築する
-     */
-    private static void buildUserEnv(String contractId) {
-        String accessToken = pdPochittoInvoiceRegistration.getAccessToken('API');
-
-        Http http = new Http();
-        HttpRequest req = new HttpRequest();
-        req.setMethod('POST');
-        req.setEndpoint('callout:PochittoInvoiceApi/api/registration');
-        req.setHeader('content-type', 'application/json');
-        req.setHeader('authorization', accessToken);
-        
-        JSONGenerator data = JSON.createGenerator(false);
-        data.writeStartObject();
-        data.writeStringField('contract_id', contractId);
-        data.writeEndObject();
-        req.setBody(data.getAsString());
-
-        HttpResponse res = http.send(req);
-        if (res.getStatusCode() == 201) {
-            Map<String, Object> mapRes = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
-            String result = (String)mapRes.get('result');
-            if (result != 'OK') {
-                throw new OtherException('ユーザ環境構築でエラーが発生しました: ' + (String)mapRes.get('errorMessage'));
-            }
-        }
-        else {
-            throw new OtherException(pdPochittoInvoiceRegistration.getApiErrorMessage(res.getBody()));
-        }
-    }
-
-    /**
-     * Auth0からアクセストークンを取得する
-     */
-    private static String getAccessToken(String developerName) {
-        Auth0__mdt auth0 = [SELECT Url__c,ClientId__c,Secret__c,Audience__c,GrantType__c FROM Auth0__mdt WHERE DeveloperName=:developerName LIMIT 1];
-
-        Http http = new Http();
-        HttpRequest req = new HttpRequest();
-        req.setMethod('POST');
-        req.setEndpoint(auth0.Url__c);
-        req.setHeader('content-type', 'application/json');
-
-        JSONGenerator data = JSON.createGenerator(false);
-        data.writeStartObject();
-        data.writeStringField('client_id', auth0.ClientId__c);
-        data.writeStringField('client_secret', auth0.Secret__c);
-        data.writeStringField('audience', auth0.Audience__c);
-        data.writeStringField('grant_type', auth0.GrantType__c);
-        data.writeEndObject();
-        req.setBody(data.getAsString());
-
-        HttpResponse res = http.send(req);
-        if (res.getStatusCode() == 200) {
-            Map<String, Object> mapRes = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
-            return (String)mapRes.get('token_type') + ' ' + (String)mapRes.get('access_token');
-        }
-        else {
-            throw new OtherException(pdPochittoInvoiceRegistration.getApiErrorMessage(res.getBody()));
-        }
-    }
-
-    /**
      * エラーメッセージを設定する
     */
     private static String getApiErrorMessage(String body) {
@@ -320,7 +212,7 @@ global with sharing class pdPochittoInvoiceRegistration {
     /**
      * 契約IDを生成する
      */
-    private static String createContractId() {
+    public static String createContractId() {
         Blob b = Crypto.GenerateAESKey(128);
         String h = EncodingUtil.ConvertTohex(b);
         String guid = h.SubString(0,8) + h.SubString(8,12) + h.SubString(12,16) + h.SubString(16,20) + h.substring(20);

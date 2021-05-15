@@ -1,4 +1,4 @@
-@isTest()
+@isTest
 class pdPochittoInvoiceRegistration_test {
     @TestSetup
     static void setup(){
@@ -49,9 +49,9 @@ class pdPochittoInvoiceRegistration_test {
         TestParam testParam = new TestParam();
         testParam.customer = data.getAsString();
 
-        Test.startTest();
+        Test.setMock(HttpCalloutMock.class, new pdPochittoInvoice_mock());
 
-        Test.setMock(HttpCalloutMock.class, new pdPochittoInvoiceRegistration_mock());
+        Test.startTest();
 
         RestRequest req = new RestRequest();
         RestResponse res = new RestResponse();

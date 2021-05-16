@@ -79,6 +79,65 @@ public with sharing class pdPochittoInvoiceAuth0 {
     }
 
     /**
+     * 契約IDに該当するユーザをブロックする
+     */
+    @future(callout = true)
+    public static void blockUser(String contractId) {
+        List<String> lstUserId = pdPochittoInvoiceAuth0.getUserIdByContractId(contractId);
+
+        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('Management');
+        Http http = new Http();
+
+        for (String userId : lstUserId) {
+            userId = userId.replace('|', '%7C');
+            HttpRequest req = new HttpRequest();
+            req.setMethod('PATCH');
+            req.setEndpoint('callout:Auth0/api/v2/users/' + userId);
+            req.setHeader('content-type', 'application/json');
+            req.setHeader('authorization', accessToken);
+    
+            JSONGenerator data = JSON.createGenerator(false);
+            data.writeStartObject();
+            data.writeBooleanField('blocked', true);
+            data.writeEndObject();
+            req.setBody(data.getAsString());
+    
+            HttpResponse res = http.send(req);
+            if (res.getStatusCode() != 200) {
+                throw new OtherException(pdPochittoInvoiceAuth0.getApiErrorMessage(res.getBody()));
+            }
+        }
+    }
+
+    /**
+     * 契約IDに該当するユーザを取得する
+     */
+    private static List<String> getUserIdByContractId(String contractId) {
+        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('Management');
+
+        Http http = new Http();
+        HttpRequest req = new HttpRequest();
+        req.setMethod('GET');
+        req.setEndpoint('callout:Auth0/api/v2/users?q=name:' + contractId);
+        req.setHeader('content-type', 'application/json');
+        req.setHeader('authorization', accessToken);
+
+        HttpResponse res = http.send(req);
+        if (res.getStatusCode() == 200) {
+            List<Object> lstRes = (List<Object>)JSON.deserializeUntyped(res.getBody());
+            List<String> lstUserId = new List<String>();
+            for (Object objRes : lstRes) {
+                Map<String, Object> mapRes = (Map<String, Object>)objRes;
+                lstUserId.add((String)mapRes.get('user_id'));
+            }
+            return lstUserId;
+        }
+        else {
+            throw new OtherException(pdPochittoInvoiceAuth0.getApiErrorMessage(res.getBody()));
+        }
+    }
+
+    /**
      * エラーメッセージを設定する
     */
     private static String getApiErrorMessage(String body) {

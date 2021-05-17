@@ -56,7 +56,7 @@ global with sharing class pdPochittoInvoiceRegistration {
 
             Map<String, Object> mapCustomer = (Map<String, Object>)JSON.deserializeUntyped(customer);
 
-            Boolean result = pdPochittoInvoiceAuth0.createUserOfAuth0(contractId, (String)mapCustomer.get('Email'), (String)mapCustomer.get('Company'));
+            Boolean result = pdPochittoInvoiceAuth0.createUser(contractId, (String)mapCustomer.get('Email'), (String)mapCustomer.get('Company'));
 
             if (result) {
                 pdPochittoInvoiceAzure.buildUserEnv(contractId);

@@ -6,7 +6,7 @@ public with sharing class pdPochittoInvoiceAuth0 {
      * Auth0のユーザIDを作成する
      * * ユーザがすでに存在する場合はエラーにしない(ステータスコード = 409)
      */
-    public static Boolean createUserOfAuth0(String contractId, String email, String companyName) {
+    public static Boolean createUser(String contractId, String email, String companyName) {
         String accessToken = pdPochittoInvoiceAuth0.getAccessToken('Management');
         String password = pdPochittoInvoiceRegistration.createContractId();
         password += '@PI';
@@ -89,7 +89,7 @@ public with sharing class pdPochittoInvoiceAuth0 {
         Http http = new Http();
 
         for (String userId : lstUserId) {
-            userId = userId.replace('|', '%7C');
+            userId = EncodingUtil.urlEncode(userId, 'UTF-8');
             HttpRequest req = new HttpRequest();
             req.setMethod('PATCH');
             req.setEndpoint('callout:Auth0/api/v2/users/' + userId);
@@ -104,6 +104,30 @@ public with sharing class pdPochittoInvoiceAuth0 {
     
             HttpResponse res = http.send(req);
             if (res.getStatusCode() != 200) {
+                throw new OtherException(pdPochittoInvoiceAuth0.getApiErrorMessage(res.getBody()));
+            }
+        }
+    }
+
+    /**
+     * 契約IDに該当するユーザを削除する
+     */
+    public static void deleteUser(String contractId) {
+        List<String> lstUserId = pdPochittoInvoiceAuth0.getUserIdByContractId(contractId);
+
+        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('Management');
+        Http http = new Http();
+
+        for (String userId : lstUserId) {
+            userId = EncodingUtil.urlEncode(userId, 'UTF-8');
+            HttpRequest req = new HttpRequest();
+            req.setMethod('DELETE');
+            req.setEndpoint('callout:Auth0/api/v2/users/' + userId);
+            req.setHeader('content-type', 'application/json');
+            req.setHeader('authorization', accessToken);
+    
+            HttpResponse res = http.send(req);
+            if (res.getStatusCode() != 204) {
                 throw new OtherException(pdPochittoInvoiceAuth0.getApiErrorMessage(res.getBody()));
             }
         }

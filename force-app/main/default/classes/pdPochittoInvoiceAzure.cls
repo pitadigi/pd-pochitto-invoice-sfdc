@@ -35,6 +35,38 @@ public with sharing class pdPochittoInvoiceAzure {
     }
 
     /**
+     * Azureのユーザ環境を削除する
+     */
+    public static void deleteUserEnv(String contractId) {
+        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('API');
+
+        Http http = new Http();
+        HttpRequest req = new HttpRequest();
+        req.setMethod('DELETE');
+        req.setEndpoint('callout:PochittoInvoiceApi/api/maintenance/userenv');
+        req.setHeader('content-type', 'application/json');
+        req.setHeader('authorization', accessToken);
+        
+        JSONGenerator data = JSON.createGenerator(false);
+        data.writeStartObject();
+        data.writeStringField('contract_id', contractId);
+        data.writeEndObject();
+        req.setBody(data.getAsString());
+
+        HttpResponse res = http.send(req);
+        if (res.getStatusCode() == 200) {
+            Map<String, Object> mapRes = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
+            String result = (String)mapRes.get('result');
+            if (result != 'OK') {
+                throw new OtherException('ユーザ環境削除でエラーが発生しました: ' + (String)mapRes.get('errorMessage'));
+            }
+        }
+        else {
+            throw new OtherException(pdPochittoInvoiceAzure.getApiErrorMessage(res.getBody()));
+        }
+    }
+
+    /**
      * 契約ステータスを終了にする
      */
     @InvocableMethod(label='契約ステータスを終了' description='Azureの契約IDのステータスを終了に変更する')

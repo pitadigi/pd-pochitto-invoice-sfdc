@@ -1,5 +1,5 @@
 @isTest
-class pdPochittoInvoiceContractBatch_test {
+class pdPIContractBatch_test {
     @TestSetup
     static void setup(){
         Account account = new Account(
@@ -23,12 +23,12 @@ class pdPochittoInvoiceContractBatch_test {
     }
 
     @isTest
-    static void test_pdPochittoInvoiceContractBatch() {
-        Test.setMock(HttpCalloutMock.class, new pdPochittoInvoice_mock());
+    static void test_pdPIContractBatch() {
+        Test.setMock(HttpCalloutMock.class, new pdPIHttpCallout_mock());
 
         Test.startTest();
 
-        pdPochittoInvoiceContractBatch b = new pdPochittoInvoiceContractBatch();
+        pdPIContractBatch b = new pdPIContractBatch();
         Database.executeBatch(b);
 
         Test.stopTest();

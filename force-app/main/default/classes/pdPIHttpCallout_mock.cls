@@ -1,4 +1,4 @@
-global class pdPochittoInvoice_mock implements HttpCalloutMock {
+global class pdPIHttpCallout_mock implements HttpCalloutMock {
     global HttpResponse respond(HTTPRequest req) {
         String endPoint = req.getEndpoint();
         String method = req.getMethod();

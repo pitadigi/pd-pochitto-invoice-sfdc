@@ -1,4 +1,4 @@
-public with sharing class pdPochittoInvoiceAuth0 {
+public with sharing class pdPIAuth0 {
     public virtual class BaseException extends Exception {}
     public class OtherException extends BaseException {}
 
@@ -7,8 +7,8 @@ public with sharing class pdPochittoInvoiceAuth0 {
      * * ユーザがすでに存在する場合はエラーにしない(ステータスコード = 409)
      */
     public static Boolean createUser(String contractId, String email, String companyName) {
-        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('Management');
-        String password = pdPochittoInvoiceRegistration.createContractId();
+        String accessToken = pdPIAuth0.getAccessToken('Management');
+        String password = pdPIRegistration.createContractId();
         password += '@PI';
 
         Http http = new Http();
@@ -41,7 +41,7 @@ public with sharing class pdPochittoInvoiceAuth0 {
             return false;
         }
         else if (res.getStatusCode() != 201) {
-            throw new OtherException(pdPochittoInvoiceAuth0.getApiErrorMessage(res.getBody()));
+            throw new OtherException(pdPIAuth0.getApiErrorMessage(res.getBody()));
         }
 
         return true;
@@ -74,7 +74,7 @@ public with sharing class pdPochittoInvoiceAuth0 {
             return (String)mapRes.get('token_type') + ' ' + (String)mapRes.get('access_token');
         }
         else {
-            throw new OtherException(pdPochittoInvoiceAuth0.getApiErrorMessage(res.getBody()));
+            throw new OtherException(pdPIAuth0.getApiErrorMessage(res.getBody()));
         }
     }
 
@@ -83,9 +83,9 @@ public with sharing class pdPochittoInvoiceAuth0 {
      */
     @future(callout = true)
     public static void blockUser(String contractId) {
-        List<String> lstUserId = pdPochittoInvoiceAuth0.getUserIdByContractId(contractId);
+        List<String> lstUserId = pdPIAuth0.getUserIdByContractId(contractId);
 
-        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('Management');
+        String accessToken = pdPIAuth0.getAccessToken('Management');
         Http http = new Http();
 
         for (String userId : lstUserId) {
@@ -104,7 +104,7 @@ public with sharing class pdPochittoInvoiceAuth0 {
     
             HttpResponse res = http.send(req);
             if (res.getStatusCode() != 200) {
-                throw new OtherException(pdPochittoInvoiceAuth0.getApiErrorMessage(res.getBody()));
+                throw new OtherException(pdPIAuth0.getApiErrorMessage(res.getBody()));
             }
         }
     }
@@ -113,9 +113,9 @@ public with sharing class pdPochittoInvoiceAuth0 {
      * 契約IDに該当するユーザを削除する
      */
     public static void deleteUser(String contractId) {
-        List<String> lstUserId = pdPochittoInvoiceAuth0.getUserIdByContractId(contractId);
+        List<String> lstUserId = pdPIAuth0.getUserIdByContractId(contractId);
 
-        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('Management');
+        String accessToken = pdPIAuth0.getAccessToken('Management');
         Http http = new Http();
 
         for (String userId : lstUserId) {
@@ -128,7 +128,7 @@ public with sharing class pdPochittoInvoiceAuth0 {
     
             HttpResponse res = http.send(req);
             if (res.getStatusCode() != 204) {
-                throw new OtherException(pdPochittoInvoiceAuth0.getApiErrorMessage(res.getBody()));
+                throw new OtherException(pdPIAuth0.getApiErrorMessage(res.getBody()));
             }
         }
     }
@@ -137,7 +137,7 @@ public with sharing class pdPochittoInvoiceAuth0 {
      * 契約IDに該当するユーザを取得する
      */
     private static List<String> getUserIdByContractId(String contractId) {
-        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('Management');
+        String accessToken = pdPIAuth0.getAccessToken('Management');
 
         Http http = new Http();
         HttpRequest req = new HttpRequest();
@@ -157,7 +157,7 @@ public with sharing class pdPochittoInvoiceAuth0 {
             return lstUserId;
         }
         else {
-            throw new OtherException(pdPochittoInvoiceAuth0.getApiErrorMessage(res.getBody()));
+            throw new OtherException(pdPIAuth0.getApiErrorMessage(res.getBody()));
         }
     }
 
@@ -166,7 +166,6 @@ public with sharing class pdPochittoInvoiceAuth0 {
     */
     private static String getApiErrorMessage(String body) {
         String errorMessage = 'Auth0 APIでエラーが発生しました: ' + body;
-        system.debug(errorMessage);
         return errorMessage;
     }
 }

@@ -1,26 +1,26 @@
 @isTest
-class pdPochittoInvoiceAzure_test {
+class pdPIAzure_test {
     @isTest
     static void test_buildUserEnv() {
-        Test.setMock(HttpCalloutMock.class, new pdPochittoInvoice_mock());
+        Test.setMock(HttpCalloutMock.class, new pdPIHttpCallout_mock());
 
         Test.startTest();
 
-        pdPochittoInvoiceAzure.buildUserEnv('test');
+        pdPIAzure.buildUserEnv('test');
 
         Test.stopTest();
     }
 
     @isTest
     static void test_setStateToEnd() {
-        Test.setMock(HttpCalloutMock.class, new pdPochittoInvoice_mock());
+        Test.setMock(HttpCalloutMock.class, new pdPIHttpCallout_mock());
 
         List<Contract> lstContact = new List<Contract>();
         lstContact.add(new Contract(ContractId__c='dev'));
 
         Test.startTest();
 
-        pdPochittoInvoiceAzure.setStateToEnd(lstContact);
+        pdPIAzure.setStateToEnd(lstContact);
 
         Test.stopTest();
     }

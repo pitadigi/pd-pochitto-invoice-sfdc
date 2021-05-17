@@ -1,4 +1,4 @@
-public class pdPochittoInvoiceContractBatch implements Database.Batchable<sObject>, Database.AllowsCallouts {
+public class pdPIContractBatch implements Database.Batchable<sObject>, Database.AllowsCallouts {
     /**
      * 以下の条件に合致する契約を返す
      * * ポチッと請求契約IDがnull以外
@@ -7,7 +7,7 @@ public class pdPochittoInvoiceContractBatch implements Database.Batchable<sObjec
      */
     public Database.QueryLocator start(Database.BatchableContext bc) {
         Date startDate = Date.today();
-        startDate.addDays(-32);
+        startDate = startDate.addDays(-32);
 
         return Database.getQueryLocator(
             [
@@ -24,8 +24,8 @@ public class pdPochittoInvoiceContractBatch implements Database.Batchable<sObjec
      */
     public void execute(Database.BatchableContext bc, List<Contract> lstContract) {
         for (Contract contract: lstContract) {
-            pdPochittoInvoiceAuth0.deleteUser(contract.ContractId__c);
-            pdPochittoInvoiceAzure.deleteUserEnv(contract.ContractId__c);
+            pdPIAuth0.deleteUser(contract.ContractId__c);
+            pdPIAzure.deleteUserEnv(contract.ContractId__c);
 
             contract.piDeletedUserEnv__c = true;
         }

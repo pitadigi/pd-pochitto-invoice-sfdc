@@ -1,4 +1,4 @@
-public with sharing class pdPochittoInvoiceAzure {
+public with sharing class pdPIAzure {
     public virtual class BaseException extends Exception {}
     public class OtherException extends BaseException {}
 
@@ -6,7 +6,7 @@ public with sharing class pdPochittoInvoiceAzure {
      * Azureのユーザ環境を構築する
      */
     public static void buildUserEnv(String contractId) {
-        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('API');
+        String accessToken = pdPIAuth0.getAccessToken('API');
 
         Http http = new Http();
         HttpRequest req = new HttpRequest();
@@ -30,7 +30,7 @@ public with sharing class pdPochittoInvoiceAzure {
             }
         }
         else {
-            throw new OtherException(pdPochittoInvoiceAzure.getApiErrorMessage(res.getBody()));
+            throw new OtherException(pdPIAzure.getApiErrorMessage(res.getBody()));
         }
     }
 
@@ -38,7 +38,7 @@ public with sharing class pdPochittoInvoiceAzure {
      * Azureのユーザ環境を削除する
      */
     public static void deleteUserEnv(String contractId) {
-        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('API');
+        String accessToken = pdPIAuth0.getAccessToken('API');
 
         Http http = new Http();
         HttpRequest req = new HttpRequest();
@@ -47,6 +47,8 @@ public with sharing class pdPochittoInvoiceAzure {
         req.setHeader('content-type', 'application/json');
         req.setHeader('authorization', accessToken);
         
+        system.debug(accessToken);
+
         JSONGenerator data = JSON.createGenerator(false);
         data.writeStartObject();
         data.writeStringField('contract_id', contractId);
@@ -62,7 +64,7 @@ public with sharing class pdPochittoInvoiceAzure {
             }
         }
         else {
-            throw new OtherException(pdPochittoInvoiceAzure.getApiErrorMessage(res.getBody()));
+            throw new OtherException(pdPIAzure.getApiErrorMessage(res.getBody()));
         }
     }
 
@@ -76,8 +78,8 @@ public with sharing class pdPochittoInvoiceAzure {
                 continue;
             }
 
-            pdPochittoInvoiceAzure.setState(contract.ContractId__c, 'end');
-            pdPochittoInvoiceAuth0.blockUser(contract.ContractId__c);
+            pdPIAzure.setState(contract.ContractId__c, 'end');
+            pdPIAuth0.blockUser(contract.ContractId__c);
         }
     }
 
@@ -86,7 +88,7 @@ public with sharing class pdPochittoInvoiceAzure {
      */
     @future(callout = true)
     private static void setState(String contractId, String state) {
-        String accessToken = pdPochittoInvoiceAuth0.getAccessToken('API');
+        String accessToken = pdPIAuth0.getAccessToken('API');
 
         Http http = new Http();
         HttpRequest req = new HttpRequest();
@@ -114,7 +116,7 @@ public with sharing class pdPochittoInvoiceAzure {
             }
         }
         else {
-            throw new OtherException(pdPochittoInvoiceAzure.getApiErrorMessage(res.getBody()));
+            throw new OtherException(pdPIAzure.getApiErrorMessage(res.getBody()));
         }
     }
 
@@ -123,7 +125,6 @@ public with sharing class pdPochittoInvoiceAzure {
     */
     private static String getApiErrorMessage(String body) {
         String errorMessage = 'Azure APIでエラーが発生しました: ' + body;
-        system.debug(errorMessage);
         return errorMessage;
     }
 }

@@ -27,9 +27,9 @@
         <groupingString>Activated</groupingString>
     </standardValue>
     <standardValue>
-        <fullName>End</fullName>
+        <fullName>Closed</fullName>
         <default>false</default>
-        <label>End</label>
+        <label>Closed</label>
         <groupingString>Activated</groupingString>
     </standardValue>
 </StandardValueSet>

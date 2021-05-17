@@ -16,7 +16,7 @@ class pdPIContractBatchScheduler_test {
             piDeletedUserEnv__c = false
         );
         insert contract;
-        contract.Status = 'End';
+        contract.Status = 'Closed';
         contract.EndDate = Date.today().addDays(-33);
         update contract;
     }

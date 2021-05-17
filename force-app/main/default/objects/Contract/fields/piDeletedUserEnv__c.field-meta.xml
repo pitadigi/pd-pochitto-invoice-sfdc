@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>ContractId__c</fullName>
+    <fullName>piDeletedUserEnv__c</fullName>
+    <defaultValue>false</defaultValue>
     <externalId>false</externalId>
-    <label>ポチッと請求契約ID</label>
-    <length>255</length>
-    <required>false</required>
+    <label>ポチッと請求環境削除</label>
     <trackHistory>false</trackHistory>
-    <type>Text</type>
-    <unique>false</unique>
+    <type>Checkbox</type>
 </CustomField>

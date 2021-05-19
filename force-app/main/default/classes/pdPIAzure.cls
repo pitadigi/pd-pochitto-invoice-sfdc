@@ -96,6 +96,7 @@ public with sharing class pdPIAzure {
         req.setEndpoint('callout:PochittoInvoiceApi/api/maintenance/userenv');
         req.setHeader('content-type', 'application/json');
         req.setHeader('authorization', accessToken);
+        req.setTimeout(30 * 1000);
         
         JSONGenerator data = JSON.createGenerator(false);
         data.writeStartObject();
@@ -112,6 +113,7 @@ public with sharing class pdPIAzure {
             Map<String, Object> mapRes = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
             String result = (String)mapRes.get('result');
             if (result != 'OK') {
+                system.debug((String)mapRes.get('errorMessage'));
                 throw new OtherException('ステータス変更でエラーが発生しました: ' + (String)mapRes.get('errorMessage'));
             }
         }

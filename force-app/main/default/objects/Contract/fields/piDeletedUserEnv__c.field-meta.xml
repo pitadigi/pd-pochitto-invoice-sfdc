@@ -3,7 +3,7 @@
     <fullName>piDeletedUserEnv__c</fullName>
     <defaultValue>false</defaultValue>
     <externalId>false</externalId>
-    <label>ポチッと請求環境削除</label>
+    <label>クラウドサービス環境削除</label>
     <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

@@ -32,12 +32,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contract.CloudService__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contract.ContractId__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Contract.Payment__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contract.piDeletedUserEnv__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -52,4 +62,12 @@
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>ポチッと請求</label>
+    <recordTypeVisibilities>
+        <recordType>Contract.CloudService</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <recordType>Contract.Normal</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
 </PermissionSet>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>PochittoInvoice</fullName>
+        <default>false</default>
+        <label>ポチッと請求</label>
+    </customValue>
+    <masterLabel>クラウドサービス</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

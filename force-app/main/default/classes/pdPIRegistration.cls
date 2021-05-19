@@ -150,9 +150,11 @@ global with sharing class pdPIRegistration {
         upsert contact;
 
         PriceBook2 priceBook2 = [SELECT Id FROM PriceBook2 WHERE Name='Standard Price Book' LIMIT 1];
+        ID recordTypeId = [SELECT Id FROM RecordType WHERE SobjectType='Contract' AND DeveloperName='CloudService'].Id;
 
         Contract contract = new Contract();
         contract.Status = 'Draft';
+        contract.recordTypeId = recordTypeId;
         contract.ShippingPostalCode = (String)mapCustomer.get('PostalCode');
         contract.ShippingState = (String)mapCustomer.get('State');
         contract.ShippingCity = (String)mapCustomer.get('City');
@@ -171,6 +173,7 @@ global with sharing class pdPIRegistration {
         contract.CustomerSignedTitle = contact.Title;
         contract.Pricebook2Id = priceBook2.Id;
         contract.Type__c = '月額';
+        contract.CloudService__c = 'ポチッと請求';
         contract.ContractId__c = contractId;
         insert contract;
 

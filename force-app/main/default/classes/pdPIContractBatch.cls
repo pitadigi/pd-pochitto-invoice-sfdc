@@ -1,11 +1,15 @@
 public class pdPIContractBatch implements Database.Batchable<sObject>, Database.AllowsCallouts {
     /**
      * 以下の条件に合致する契約を返す
-     * * ポチッと請求契約IDがnull以外
-     * * ポチッと請求環境削除フラグがfalse
+     * * 契約レコードタイプがクラウドサービス
+     * * 契約のクラウドサービスがポチッと請求
+     * * クラウドサービス契約IDがnull以外
+     * * クラウドサービス環境削除フラグがfalse
      * * 契約終了日から32日が経過
      */
     public Database.QueryLocator start(Database.BatchableContext bc) {
+        ID recordTypeId = [SELECT Id FROM RecordType WHERE SobjectType='Contract' AND DeveloperName='CloudService'].Id;
+
         Date startDate = Date.today();
         startDate = startDate.addDays(-32);
 
@@ -13,7 +17,11 @@ public class pdPIContractBatch implements Database.Batchable<sObject>, Database.
             [
                 SELECT Id,ContractId__c,piDeletedUserEnv__c
                 FROM Contract
-                WHERE ContractId__c != null AND EndDate < :startDate AND piDeletedUserEnv__c = false
+                WHERE RecordTypeId = :recordTypeId
+                    AND CloudService__c = 'PochittoInvoice'
+                    AND ContractId__c != null
+                    AND EndDate < :startDate
+                    AND piDeletedUserEnv__c = false
             ]
         );
     }

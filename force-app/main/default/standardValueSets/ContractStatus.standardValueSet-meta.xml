@@ -5,31 +5,43 @@
     <standardValue>
         <fullName>Draft</fullName>
         <default>false</default>
-        <label>Draft</label>
+        <label>ドラフト</label>
         <groupingString>Draft</groupingString>
     </standardValue>
     <standardValue>
         <fullName>Trial</fullName>
         <default>false</default>
-        <label>Trial</label>
+        <label>トライアル</label>
+        <groupingString>InApproval</groupingString>
+    </standardValue>
+    <standardValue>
+        <fullName>In Progress</fullName>
+        <default>false</default>
+        <label>準備中</label>
         <groupingString>InApproval</groupingString>
     </standardValue>
     <standardValue>
         <fullName>In Approval Process</fullName>
         <default>false</default>
-        <label>In Approval Process</label>
+        <label>承認待ち</label>
+        <groupingString>InApproval</groupingString>
+    </standardValue>
+    <standardValue>
+        <fullName>In Confirm</fullName>
+        <default>false</default>
+        <label>確認中</label>
         <groupingString>InApproval</groupingString>
     </standardValue>
     <standardValue>
         <fullName>Activated</fullName>
         <default>false</default>
-        <label>Activated</label>
+        <label>有効</label>
         <groupingString>Activated</groupingString>
     </standardValue>
     <standardValue>
         <fullName>Closed</fullName>
         <default>false</default>
-        <label>Closed</label>
+        <label>終了</label>
         <groupingString>Activated</groupingString>
     </standardValue>
 </StandardValueSet>

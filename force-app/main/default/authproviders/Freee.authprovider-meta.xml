@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuthProvider xmlns="http://soap.sforce.com/2006/04/metadata">
+    <authorizeUrl>https://accounts.secure.freee.co.jp/public_api/authorize</authorizeUrl>
+    <consumerKey>b92a117dd712b769877a178f4760fcea47aa9074c7f1454a344b5c10012a90ab</consumerKey>
+    <consumerSecret>GFjYARFDBXRuwIYLIPWapbWS+j7aNyGLYNHrjvT8hIqgrFbhoIaO5AlRPnGVnOroCCdN5cgUW8PT/iNx+NHgnHBBGPdiC2rX</consumerSecret>
+    <friendlyName>Freee</friendlyName>
+    <includeOrgIdInIdentifier>false</includeOrgIdInIdentifier>
+    <providerType>OpenIdConnect</providerType>
+    <sendAccessTokenInHeader>true</sendAccessTokenInHeader>
+    <sendClientCredentialsInHeader>false</sendClientCredentialsInHeader>
+    <sendSecretInApis>true</sendSecretInApis>
+    <tokenUrl>https://accounts.secure.freee.co.jp/public_api/token</tokenUrl>
+</AuthProvider>

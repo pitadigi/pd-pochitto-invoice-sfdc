@@ -1,0 +1,146 @@
+public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject>, Database.AllowsCallouts {
+    public virtual class BaseException extends Exception {}
+    public class OtherException extends BaseException {}
+
+    Date startDate;
+    Date endDate;
+
+    /**
+     * 以下の条件に合致する注文商品を処理対象とする
+     * 注文商品の商品がポチッと請求(商品コードがPI0001)
+     * 注文商品の注文に対する契約が有効
+     * 契約のステータスが有効または終了で契約終了日が先月
+     */
+    public Database.QueryLocator start(Database.BatchableContext bc) {
+        this.setAggregateRange();
+
+        List<Invoice__c> lstExistInvoice = [SELECT Id FROM Invoice__c WHERE InvoiceDate__c=:this.endDate];
+        if (lstExistInvoice.size() != 0) {
+            delete lstExistInvoice;
+        }
+
+        return Database.getQueryLocator(
+            [
+                SELECT Id,Order.ContractId,Order.Contract.ContractId__c,UnitPrice,OvertimeRate__c,Product2.Name,
+                    Order.Contract.Account.Name,Order.Contract.Account.FullName__c,Order.Contract.Account.AccountCode__c,Order.Contract.Account.Phone,
+                    Order.Contract.BillingPostalCode,Order.Contract.BillingState,Order.Contract.BillingCity,Order.Contract.BillingStreet,
+                    Order.Contract.BillingContact__r.FirstName,Order.Contract.BillingContact__r.LastName,Order.Contract.BillingContact__r.Department,Order.Contract.BillingContact__r.Email
+                FROM OrderItem
+                WHERE Product2.ProductCode = 'PI0001'
+                    AND Order.ContractId != null
+                    AND (Order.Contract.Status = 'Activated' OR (Order.Contract.Status = 'Closed' AND Order.Contract.EndDate >= :this.startDate AND Order.Contract.EndDate <= :this.endDate))
+            ]
+        );
+    }
+
+    /**
+     * 契約の環境を削除する
+     * 環境を削除したら、ポチッと請求環境削除フラグを設定する
+     */
+    public void execute(Database.BatchableContext bc, List<OrderItem> lstOrderItem) {
+        this.setAggregateRange();
+
+        List<Invoice__c> lstInvoice = new List<Invoice__c>();
+
+        pdPIFreee piFreee = new pdPIFreee();
+
+        for (OrderItem orderItem: lstOrderItem) {
+            Invoice__c invoice = this.aggregateInvoice(orderItem);
+
+            Account account = new Account(
+                Name = orderItem.Order.Contract.Account.Name,
+                FullName__c = orderItem.Order.Contract.Account.FullName__c,
+                AccountCode__c = orderItem.Order.Contract.Account.AccountCode__c,
+                Phone = orderItem.Order.Contract.Account.Phone,
+                BillingPostalCode = orderItem.Order.Contract.BillingPostalCode,
+                BillingState = orderItem.Order.Contract.BillingState,
+                BillingCity = orderItem.Order.Contract.BillingCity,
+                BillingStreet = orderItem.Order.Contract.BillingStreet
+            );
+            Contact contact = new Contact(
+                FirstName = orderItem.Order.Contract.BillingContact__r.FirstName,
+                LastName = orderItem.Order.Contract.BillingContact__r.LastName,
+                Department = orderItem.Order.Contract.BillingContact__r.Department,
+                Email = orderItem.Order.Contract.BillingContact__r.Email
+            );
+
+            piFreee.registInvoice(this.startDate, this.endDate, account, contact, invoice);
+
+            lstInvoice.add(invoice);
+        }
+
+        insert lstInvoice;
+    }
+
+    /**
+     * 終了処理を行う
+     */
+    public void finish(Database.BatchableContext bc) {
+    }
+
+    /**
+     * APIから先月分の発行数とページ数を取得する
+     * 発行数 x 単価 + ページ数 x 超過単価で利用料金を算出する
+     */
+    private Invoice__c aggregateInvoice(OrderItem orderItem) {
+        String accessToken = pdPIAuth0.getAccessToken('API');
+
+        Http http = new Http();
+        HttpRequest req = new HttpRequest();
+        req.setMethod('GET');
+        String param = 'contract_id=' + orderItem.Order.Contract.ContractId__c + 
+            '&startDate=' + this.getDateString(this.startDate) +
+            '&endDate=' + this.getDateString(this.endDate);
+        req.setEndpoint('callout:PochittoInvoiceApi/api/maintenance/invoice?' + param);
+        req.setHeader('content-type', 'application/json');
+        req.setHeader('authorization', accessToken);
+
+        HttpResponse res = http.send(req);
+        if (res.getStatusCode() == 200) {
+            Map<String, Object> mapRes = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
+            String result = (String)mapRes.get('result');
+            if (result == 'OK') {
+                Invoice__c invoice = new Invoice__c();
+                invoice.Name = orderItem.Product2.Name + ' ' + this.getDateString(this.endDate) + '請求分';
+                invoice.InvoiceDate__c = this.endDate;
+                invoice.Contract__c = orderItem.Order.ContractId;
+                invoice.IssueCount__c = (Integer)mapRes.get('issueCount');
+                invoice.PageCount__c = (Integer)mapRes.get('pageCount');
+                invoice.IssueUnitPrice__c = orderItem.UnitPrice;
+                invoice.PageUnitPrice__c = orderItem.OvertimeRate__c;
+                invoice.InvoicePrice__c = ((Decimal)invoice.IssueCount__c * invoice.IssueUnitPrice__c) + ((Decimal)invoice.PageCount__c * invoice.PageUnitPrice__c);
+                return invoice;
+            } else {
+                throw new OtherException('発行数、ページ数取得でエラーが発生しました: ' + (String)mapRes.get('errorMessage'));
+            }
+        }
+        else {
+            throw new OtherException(this.getApiErrorMessage(res.getBody()));
+        }
+    }
+
+    /**
+     * 日付を文字列に変換する
+     */
+    private String getDateString(Date dt) {
+        return String.valueOf(dt.year()) + '-' + String.valueOf(dt.month()).leftPad(2, '0') + '-' + String.valueOf(dt.day()).leftPad(2, '0');
+    }
+
+    /**
+     * エラーメッセージを設定する
+    */
+    private String getApiErrorMessage(String body) {
+        String errorMessage = '発行数、ページ数取得APIでエラーが発生しました: ' + body;
+        return errorMessage;
+    }
+
+    /**
+     * 集計対象日範囲を設定する
+     */
+    private void setAggregateRange() {
+        Date today = Date.today();
+        this.startDate = Date.newInstance(today.year(), today.month(), 1);
+        // this.startDate = Date.newInstance(today.year(), today.month(), 1).addMonths(-1);
+        this.endDate = startDate.addMonths(1).addDays(-1);
+    }
+}

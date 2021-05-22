@@ -130,6 +130,9 @@ global with sharing class pdPIRegistration {
         account.BillingStreet = (String)mapCustomer.get('Street');
         account.Phone = (String)mapCustomer.get('Phone');
         account.Fax = (String)mapCustomer.get('Fax');
+        if (String.isBlank(account.AccountCode__c)) {
+            account.AccountCode__c = ContractId;
+        }
         upsert account;
 
         contact.LastName = (String)mapCustomer.get('LastName');

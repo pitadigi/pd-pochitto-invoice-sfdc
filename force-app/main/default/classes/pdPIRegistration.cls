@@ -176,7 +176,7 @@ global with sharing class pdPIRegistration {
         contract.CustomerSignedTitle = contact.Title;
         contract.Pricebook2Id = priceBook2.Id;
         contract.Type__c = '月額';
-        contract.CloudService__c = 'ポチッと請求';
+        contract.CloudService__c = 'PochittoInvoice';
         contract.ContractId__c = contractId;
         insert contract;
 

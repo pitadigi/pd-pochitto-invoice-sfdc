@@ -38,6 +38,49 @@ global class pdPIHttpCallout_mock implements HttpCalloutMock {
                 res.setBody(body);
             }
         }
+        else if (endPoint.startsWith('callout:PochittoInvoiceApi/api/maintenance/invoice')) {
+            if (method == 'GET') {
+                res.setStatusCode(200);
+                String body = '{"result": "OK","errorMessage": "", "issueCount": 100, "pageCount": 200}';
+                res.setBody(body);
+            }
+        }
+        else if (endPoint == 'callout:Freee/companies') {
+            if (method == 'GET') {
+                res.setStatusCode(200);
+                String body = '{"companies": [{"id": 12345678}]}';
+                res.setBody(body);
+            }
+        }
+        else if(endPoint.startsWith('callout:Freee/partners')) {
+            if(method == 'GET') {
+                res.setStatusCode(200);
+                String body = '{"partners": [{"id": 12345}]}';
+                res.setBody(body);
+            }
+            else if(method == 'POST') {
+                res.setStatusCode(201);
+                String body = '{"partner": {"id": 12345}}';
+                res.setBody(body);
+            }
+            else if(method == 'PUT') {
+                res.setStatusCode(200);
+                String body = '{"partner": {"id": 12345}}';
+                res.setBody(body);
+            }
+        }
+        else if(endPoint.startsWith('callout:Freee/invoices')) {
+            if(method == 'POST') {
+                res.setStatusCode(201);
+            }
+        }
+        else if(endPoint.startsWith('callout:Freee/account_items')) {
+            if(method == 'GET') {
+                res.setStatusCode(200);
+                String body = '{"account_items": [{"id": 12345678, "name": "売上高", "tax_code": 123}]}';
+                res.setBody(body);
+            }
+        }
 
         return res;
     }

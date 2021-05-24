@@ -19,3 +19,4 @@ package.xml
 **/layouts/OrderItem-**
 **/layouts/PricebookEntry-**
 **/profiles/**
+**/settings**

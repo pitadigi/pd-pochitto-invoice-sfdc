@@ -139,8 +139,7 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
      */
     private void setAggregateRange() {
         Date today = Date.today();
-        this.startDate = Date.newInstance(today.year(), today.month(), 1);
-        // this.startDate = Date.newInstance(today.year(), today.month(), 1).addMonths(-1);
+        this.startDate = Date.newInstance(today.year(), today.month(), 1).addMonths(-1);
         this.endDate = startDate.addMonths(1).addDays(-1);
     }
 }

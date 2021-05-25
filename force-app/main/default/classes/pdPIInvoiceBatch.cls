@@ -37,6 +37,7 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
     /**
      * 契約の環境を削除する
      * 環境を削除したら、ポチッと請求環境削除フラグを設定する
+     * 発行数が0だったら請求書は作成しない(請求履歴は作成する)
      */
     public void execute(Database.BatchableContext bc, List<OrderItem> lstOrderItem) {
         this.setAggregateRange();
@@ -48,25 +49,27 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
         for (OrderItem orderItem: lstOrderItem) {
             Invoice__c invoice = this.aggregateInvoice(orderItem);
 
-            Account account = new Account(
-                Name = orderItem.Order.Contract.Account.Name,
-                FullName__c = orderItem.Order.Contract.Account.FullName__c,
-                AccountCode__c = orderItem.Order.Contract.Account.AccountCode__c,
-                Phone = orderItem.Order.Contract.Account.Phone,
-                BillingPostalCode = orderItem.Order.Contract.BillingPostalCode,
-                BillingState = orderItem.Order.Contract.BillingState,
-                BillingCity = orderItem.Order.Contract.BillingCity,
-                BillingStreet = orderItem.Order.Contract.BillingStreet
-            );
-            Contact contact = new Contact(
-                FirstName = orderItem.Order.Contract.BillingContact__r.FirstName,
-                LastName = orderItem.Order.Contract.BillingContact__r.LastName,
-                Department = orderItem.Order.Contract.BillingContact__r.Department,
-                Email = orderItem.Order.Contract.BillingContact__r.Email
-            );
+            if (invoice.IssueCount__c != 0) {
+                Account account = new Account(
+                    Name = orderItem.Order.Contract.Account.Name,
+                    FullName__c = orderItem.Order.Contract.Account.FullName__c,
+                    AccountCode__c = orderItem.Order.Contract.Account.AccountCode__c,
+                    Phone = orderItem.Order.Contract.Account.Phone,
+                    BillingPostalCode = orderItem.Order.Contract.BillingPostalCode,
+                    BillingState = orderItem.Order.Contract.BillingState,
+                    BillingCity = orderItem.Order.Contract.BillingCity,
+                    BillingStreet = orderItem.Order.Contract.BillingStreet
+                );
+                Contact contact = new Contact(
+                    FirstName = orderItem.Order.Contract.BillingContact__r.FirstName,
+                    LastName = orderItem.Order.Contract.BillingContact__r.LastName,
+                    Department = orderItem.Order.Contract.BillingContact__r.Department,
+                    Email = orderItem.Order.Contract.BillingContact__r.Email
+                );
 
-            piFreee.registInvoice(this.startDate, this.endDate, account, contact, invoice);
-
+                piFreee.registInvoice(this.startDate, this.endDate, account, contact, invoice);
+            }
+            
             lstInvoice.add(invoice);
         }
 

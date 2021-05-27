@@ -69,17 +69,34 @@ public with sharing class pdPIAzure {
     }
 
     /**
-     * 契約ステータスを終了にする
+     * 契約ステータスを変更する
      */
-    @InvocableMethod(label='契約ステータスを終了' description='Azureの契約IDのステータスを終了に変更する')
-    public static void setStateToEnd(List<Contract> lstContract) {
+    @InvocableMethod(label='契約ステータスを変更' description='Azureの契約IDのステータスを変更する')
+    public static void setStateToAzure(List<Contract> lstContract) {
         for (Contract contract: lstContract) {
             if (String.isBlank(contract.ContractId__c)) {
                 continue;
             }
 
-            pdPIAzure.setState(contract.ContractId__c, 'end');
-            pdPIAuth0.blockUser(contract.ContractId__c);
+            String state;
+            if (contract.Status == 'Draft'
+                || contract.Status == 'Trial') {
+                state = 'trial';
+            } else if (contract.Status == 'In Progress'
+                || contract.Status == 'In Confirm'
+                || contract.Status == 'In Approval Process') {
+                state = 'inprep';
+            } else if (contract.Status == 'Activated') {
+                state = 'inuse';
+            } else if (contract.Status == 'Closed') {
+                state = 'end';
+            }
+
+            pdPIAzure.setState(contract.ContractId__c, state);
+
+            if (state == 'end') {
+                pdPIAuth0.blockUser(contract.ContractId__c);
+            }
         }
     }
 

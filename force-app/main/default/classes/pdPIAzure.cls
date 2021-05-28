@@ -94,9 +94,7 @@ public with sharing class pdPIAzure {
 
             pdPIAzure.setState(contract.ContractId__c, state);
 
-            if (state == 'end') {
-                pdPIAuth0.blockUser(contract.ContractId__c);
-            }
+            pdPIAuth0.setUserBlockState(contract.ContractId__c, state == 'end');
         }
     }
 

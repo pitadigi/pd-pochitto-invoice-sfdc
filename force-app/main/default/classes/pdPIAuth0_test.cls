@@ -12,12 +12,12 @@ class pdPIAuth0_test {
     }
 
     @isTest
-    static void test_blockUser() {
+    static void test_setUserBlockState() {
         Test.setMock(HttpCalloutMock.class, new pdPIHttpCallout_mock());
 
         Test.startTest();
 
-        pdPIAuth0.blockUser('test');
+        pdPIAuth0.setUserBlockState('test', true);
 
         Test.stopTest();
     }

@@ -79,10 +79,10 @@ public with sharing class pdPIAuth0 {
     }
 
     /**
-     * 契約IDに該当するユーザをブロックする
+     * 契約IDに該当するユーザをブロック状態を設定する
      */
     @future(callout = true)
-    public static void blockUser(String contractId) {
+    public static void setUserBlockState(String contractId, Boolean isBlock) {
         List<String> lstUserId = pdPIAuth0.getUserIdByContractId(contractId);
 
         String accessToken = pdPIAuth0.getAccessToken('Management');
@@ -98,7 +98,7 @@ public with sharing class pdPIAuth0 {
     
             JSONGenerator data = JSON.createGenerator(false);
             data.writeStartObject();
-            data.writeBooleanField('blocked', true);
+            data.writeBooleanField('blocked', isBlock);
             data.writeEndObject();
             req.setBody(data.getAsString());
     

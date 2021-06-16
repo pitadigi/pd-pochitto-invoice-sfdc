@@ -13,7 +13,8 @@ global with sharing class pdPIRegistration {
      *   "PostalCode": "郵便番号",
      *   "State": "都道府県",
      *   "City": "市区町村",
-     *   "Street": "住所",
+     *   "Address": "住所",
+     *   "Bill": "ビル名",
      *   "LastName": "名",
      *   "FirstName": "姓",
      *   "LastNameKana": "名カナ",
@@ -127,7 +128,7 @@ global with sharing class pdPIRegistration {
         account.BillingPostalCode = (String)mapCustomer.get('PostalCode');
         account.BillingState = (String)mapCustomer.get('State');
         account.BillingCity = (String)mapCustomer.get('City');
-        account.BillingStreet = (String)mapCustomer.get('Street');
+        account.BillingStreet = pdPIRegistration.getStreet(mapCustomer);
         account.Phone = (String)mapCustomer.get('Phone');
         account.Fax = (String)mapCustomer.get('Fax');
         if (String.isBlank(account.AccountCode__c)) {
@@ -140,7 +141,7 @@ global with sharing class pdPIRegistration {
         contact.MailingPostalCode = (String)mapCustomer.get('PostalCode');
         contact.MailingState = (String)mapCustomer.get('State');
         contact.MailingCity = (String)mapCustomer.get('City');
-        contact.MailingStreet = (String)mapCustomer.get('Street');
+        contact.MailingStreet = pdPIRegistration.getStreet(mapCustomer);
         contact.Email = (String)mapCustomer.get('Email');
         contact.Phone = (String)mapCustomer.get('Phone');
         contact.Fax = (String)mapCustomer.get('Fax');
@@ -161,11 +162,11 @@ global with sharing class pdPIRegistration {
         contract.ShippingPostalCode = (String)mapCustomer.get('PostalCode');
         contract.ShippingState = (String)mapCustomer.get('State');
         contract.ShippingCity = (String)mapCustomer.get('City');
-        contract.ShippingStreet = (String)mapCustomer.get('Street');
+        contract.ShippingStreet = pdPIRegistration.getStreet(mapCustomer);
         contract.BillingPostalCode = (String)mapCustomer.get('PostalCode');
         contract.BillingState = (String)mapCustomer.get('State');
         contract.BillingCity = (String)mapCustomer.get('City');
-        contract.BillingStreet = (String)mapCustomer.get('Street');
+        contract.BillingStreet = pdPIRegistration.getStreet(mapCustomer);
         contract.AccountId = account.Id;
         contract.BillingContact__c = contact.Id;
         contract.Name = companyName + ' - ' + 'ポチッと請求';
@@ -204,6 +205,13 @@ global with sharing class pdPIRegistration {
         orderItem.OvertimeRate__c = pricebookEntry.OvertimeRate__c;
         orderItem.PricebookEntryId = pricebookEntry.Id;
         insert orderItem;
+    }
+
+    /**
+     * 町名番地を取得する
+     */
+    private static String getStreet(Map<String, Object> mapCustomer) {
+        return (String)mapCustomer.get('Address') + '\r\n' + (String)mapCustomer.get('Bill');
     }
 
     /**

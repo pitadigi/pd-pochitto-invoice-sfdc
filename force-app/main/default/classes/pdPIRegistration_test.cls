@@ -33,7 +33,8 @@ class pdPIRegistration_test {
         data.writeStringField('PostalCode', '020-0611');
         data.writeStringField('State', '岩手県');
         data.writeStringField('City', '滝沢市');
-        data.writeStringField('Street', '巣子152-409');
+        data.writeStringField('Address', '巣子152-409');
+        data.writeStringField('Bill', '滝沢市第2イノベーションセンター');
         data.writeStringField('LastName', '俣江');
         data.writeStringField('FirstName', '幸治');
         data.writeStringField('LastNameKana', 'マタエ');

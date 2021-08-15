@@ -9,7 +9,7 @@ public with sharing class pdPIAuth0 {
     public static Boolean createUser(String contractId, String email, String companyName) {
         String accessToken = pdPIAuth0.getAccessToken('Management');
         String password = pdPIRegistration.createContractId();
-        password += '@PI';
+        password += '@P1tadigi';
 
         Http http = new Http();
         HttpRequest req = new HttpRequest();

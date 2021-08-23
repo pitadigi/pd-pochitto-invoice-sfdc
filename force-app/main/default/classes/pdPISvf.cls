@@ -23,15 +23,40 @@ public with sharing class pdPISvf {
         String auth = EncodingUtil.base64Encode(Blob.valueOf(svf.ClientId__c + ':' + svf.Secret__c));
 
         Blob privateKey = EncodingUtil.base64Decode(svf.PrivateKey__c);
-        String base = EncodingUtil.urlEncode(EncodingUtil.base64Encode(Blob.valueOf(JSON.serialize(jwtHeader))), 'UTF-8') + '.' + EncodingUtil.urlEncode(EncodingUtil.base64Encode(Blob.valueOf(JSON.serialize(jwtClaimSet))), 'UTF-8');
-        base = base.replace('+', '-').replace('/', '_').replace('=', '');
-        String sig = EncodingUtil.urlEncode(EncodingUtil.base64Encode(Crypto.sign('RSA-SHA256', Blob.valueOf(base), privateKey)), 'UTF-8');
-        base = base.replace('+', '-').replace('/', '_').replace('=', '');
-        String body = base + '.' + sig;
-
-        system.debug(body);
+        String header = this.urlEncode(EncodingUtil.base64Encode(Blob.valueOf(JSON.serialize(jwtHeader))));
+        String payload = this.urlEncode(EncodingUtil.base64Encode(Blob.valueOf(JSON.serialize(jwtClaimSet))));
+        String base = header + '.' + payload;
+        String sig = this.urlEncode(EncodingUtil.base64Encode(Crypto.sign('RSA-SHA256', Blob.valueOf(base), privateKey)));
+        String jwt = base + '.' + sig;
         
-        return 'ok';
+        HttpRequest httpRequest = new HttpRequest();
+        httpRequest.setEndpoint('callout:Svf/oauth2/token');
+        httpRequest.setMethod('POST');
+        httpRequest.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+        httpRequest.setHeader('Authorization', 'Basic ' + auth);
+        String body = 'grant_type=' + EncodingUtil.urlEncode('urn:ietf:params:oauth:grant-type:jwt-bearer', 'UTF-8');
+        body += '&assertion=' + jwt;
+        httpRequest.setBody(body);
+
+        Http http = new Http();
+        HTTPResponse httpResponse = http.send(httpRequest);
+
+        Map<String, Object> mapBody = (Map<String, Object>)JSON.deserializeUntyped(httpResponse.getBody());
+
+        return (String)mapBody.get('token');
+    }
+
+    /**
+     * 文字列をURLエンコードする(JWT対応)
+     */
+    private String urlEncode(String str) {
+        String result = str.replaceAll('\\+', '-').replaceAll('/', '_');
+
+        while(result.endsWith('=')) {
+            result = result.left(result.length() - 1);
+        }
+
+        return result;
     }
 
     class JWTHeader {
@@ -47,4 +72,5 @@ public with sharing class pdPISvf {
         String timeZone;
         String locale;
     }
+
 }

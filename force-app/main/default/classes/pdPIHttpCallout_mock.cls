@@ -81,6 +81,18 @@ global class pdPIHttpCallout_mock implements HttpCalloutMock {
                 res.setBody(body);
             }
         }
+        else if(endPoint.startsWith('callout:Svf/oauth2')) {
+            res.setStatusCode(200);
+            String body = '{"token": "eyJXXXXXXXX"}';
+            res.setBody(body);
+        }
+        else if(endPoint.startsWith('callout:Svf/resources')) {
+            if(method == 'POST') {
+                res.setStatusCode(201);
+            } else if (method == 'DELETE') {
+                res.setStatusCode(204);
+            }                
+        }
 
         return res;
     }

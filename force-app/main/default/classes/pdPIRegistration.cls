@@ -60,6 +60,9 @@ global with sharing class pdPIRegistration {
             Boolean result = pdPIAuth0.createUser(contractId, (String)mapCustomer.get('Email'), (String)mapCustomer.get('Company'));
 
             if (result) {
+                pdPISvf piSvf = new pdPISvf();
+                piSvf.regist(contractId);
+
                 pdPIAzure.buildUserEnv(contractId);
     
                 pdPIRegistration.registContract(contractId, mapCustomer);

@@ -31,8 +31,11 @@ public class pdPIContractBatch implements Database.Batchable<sObject>, Database.
      * 環境を削除したら、ポチッと請求環境削除フラグを設定する
      */
     public void execute(Database.BatchableContext bc, List<Contract> lstContract) {
+        pdPISvf piSvf = new pdPISvf();
+
         for (Contract contract: lstContract) {
             pdPIAuth0.deleteUser(contract.ContractId__c);
+            piSvf.remove(contract.ContractId__c);
             pdPIAzure.deleteUserEnv(contract.ContractId__c);
 
             contract.piDeletedUserEnv__c = true;

@@ -46,8 +46,6 @@ public with sharing class pdPIAzure {
         req.setEndpoint('callout:PochittoInvoiceApi/api/maintenance/userenv');
         req.setHeader('content-type', 'application/json');
         req.setHeader('authorization', accessToken);
-        
-        system.debug(accessToken);
 
         JSONGenerator data = JSON.createGenerator(false);
         data.writeStartObject();

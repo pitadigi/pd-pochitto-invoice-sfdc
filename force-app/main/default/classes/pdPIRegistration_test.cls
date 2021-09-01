@@ -21,51 +21,34 @@ class pdPIRegistration_test {
             IsActive = true
         );
         insert pricebookEntry;
+
+        ServiceApplication__c serviceApplication = new ServiceApplication__c();
+        serviceApplication.ServiceName__c = 'ポチッと請求';
+        serviceApplication.CompanyName__c = 'ぴたデジ株式会社';
+        serviceApplication.PostalCode__c = '020-0611';
+        serviceApplication.State__c = '岩手県';
+        serviceApplication.City__c = '滝沢市';
+        serviceApplication.Street__c = '巣子152-409';
+        serviceApplication.Bill__c = '滝沢市第2イノベーションセンター';
+        serviceApplication.Department__c = '経理部';
+        serviceApplication.LastName__c = '俣江';
+        serviceApplication.FirstName__c = '幸治';
+        serviceApplication.Phone__c = '019-618-0161';
+        serviceApplication.MailAddress__c = 'test@test.jp';
+        insert serviceApplication;
     }
 
     @isTest
     static void test_regist() {
-        JSONGenerator data = JSON.createGenerator(false);
-        data.writeStartObject();
-        data.writeStringField('Company', 'ぴたデジ株式会社');
-        data.writeStringField('Department', '役員');
-        data.writeStringField('Title', '代表取締役');
-        data.writeStringField('PostalCode', '020-0611');
-        data.writeStringField('State', '岩手県');
-        data.writeStringField('City', '滝沢市');
-        data.writeStringField('Address', '巣子152-409');
-        data.writeStringField('Bill', '滝沢市第2イノベーションセンター');
-        data.writeStringField('LastName', '俣江');
-        data.writeStringField('FirstName', '幸治');
-        data.writeStringField('LastNameKana', 'マタエ');
-        data.writeStringField('FirstNameKana', 'コウジ');
-        data.writeStringField('Email', 'kmatae@pitadigi.jp');
-        data.writeStringField('Phone', '019-618-0161');
-        data.writeStringField('Fax', '019-619-0427');
-        data.writeStringField('Payment', 'PayPal');
-        data.writeStringField('Tags', 'ポチッと請求');
-        data.writeStringField('Satori', 'https://satr.jp');
-        data.writeEndObject();
-
-        TestParam testParam = new TestParam();
-        testParam.customer = data.getAsString();
+        List<ServiceApplication__c> lstServiceApplication = [SELECT Id, ServiceName__c, CompanyName__c, PostalCode__c, State__c, City__c,
+                                                            Street__c, Bill__c, Department__c, LastName__c, FirstName__c, Phone__c, MailAddress__c
+                                                            FROM ServiceApplication__c];
 
         Test.setMock(HttpCalloutMock.class, new pdPIHttpCallout_mock());
 
         Test.startTest();
-
-        RestRequest req = new RestRequest();
-        RestResponse res = new RestResponse();
-
-        req.requestURI = '/services/apexrest/pi-regist/';
-        req.httpMethod = 'POST';
-        req.requestBody = Blob.valueOf(JSON.serialize(testParam));
-
-        String result = pdPIRegistration.regist(testParam.customer);
-
-        Map<String, Object> mapResult = (Map<String, Object>)JSON.deserializeUntyped(result);
-        System.assertEquals((Boolean)mapResult.get('result'), true, '結果がtrueではありません: ' + (String)mapResult.get('message'));
-        System.assertEquals((String)mapResult.get('message'), '', 'メッセージが空ではありません');
+        pdPIRegistration.regist(lstServiceApplication);
+        Test.stopTest();
 
         List<Account> lstAccount = [SELECT Id,Name FROM Account];
         System.assertEquals(lstAccount.size(), 1, '取引先が作成されていません');
@@ -81,8 +64,6 @@ class pdPIRegistration_test {
 
         List<OrderItem> lstOrderItem = [SELECT Id FROM OrderItem];
         System.assertEquals(lstOrderItem.size(), 1, '注文商品が作成されていません');
-
-        Test.stopTest();
     }
 
     class TestParam {

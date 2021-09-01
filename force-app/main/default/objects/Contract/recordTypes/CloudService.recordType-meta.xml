@@ -6,7 +6,7 @@
     <picklistValues>
         <picklist>CloudService__c</picklist>
         <values>
-            <fullName>PochittoInvoice</fullName>
+            <fullName>ポチッと請求</fullName>
             <default>false</default>
         </values>
     </picklistValues>

@@ -66,6 +66,10 @@
                 <behavior>Edit</behavior>
                 <field>ServiceName__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Contract__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

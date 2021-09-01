@@ -43,6 +43,7 @@ public with sharing class pdPIRegistration {
      * * 請求先が別途指定であれば、同じ取引先に同じメールアドレスを持つ取引先責任者がいるかをチェックする ※SATORIでチェックできないので保留
      * * 同じ取引先責任者が存在しなければ追加する ※SATORIでチェックできないので保留
      * * 取引先に対して契約を作成する(状況はトライアル)
+     * * サービス申込に登録した契約をリンクする
      */
     private static void registContract(String contractId, ServiceApplication__c serviceApplication) {
         Account account;
@@ -156,6 +157,9 @@ public with sharing class pdPIRegistration {
         orderItem.OvertimeRate__c = pricebookEntry.OvertimeRate__c;
         orderItem.PricebookEntryId = pricebookEntry.Id;
         insert orderItem;
+
+        serviceApplication.Contract__c = contract.Id;
+        update serviceApplication;
     }
 
     /**

@@ -20,3 +20,5 @@ package.xml
 **/layouts/PricebookEntry-**
 **/profiles/**
 **/settings**
+
+**/SVF__mdt/**

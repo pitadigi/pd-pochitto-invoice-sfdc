@@ -106,7 +106,7 @@ public with sharing class pdPISvf {
      * SVF Cloudからアクセストークンを取得する
      */
     private String getAccessToken() {
-        Svf__mdt svf = [SELECT ClientId__c,Secret__c,TimeZone__c,UserId__c,UserName__c,Locale__c,PrivateKey__c FROM Svf__mdt LIMIT 1];
+        SvfCloud__mdt svf = [SELECT ClientId__c,Secret__c,TimeZone__c,UserId__c,UserName__c,Locale__c,PrivateKey__c FROM SvfCloud__mdt LIMIT 1];
 
         JWTHeader jwtHeader = new JwtHeader();
         jwtHeader.alg = 'RS256';

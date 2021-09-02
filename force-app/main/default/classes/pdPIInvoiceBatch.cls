@@ -21,7 +21,7 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
 
         return Database.getQueryLocator(
             [
-                SELECT Id,Order.ContractId,Order.Contract.ContractId__c,UnitPrice,OvertimeRate__c,Product2.Name,
+                SELECT Id,Order.ContractId,Order.Contract.ContractId__c,UnitPrice,OvertimeRate__c,Product2.Name,OptionUnitPrice__c,OptionOvertimeRate__c,
                     Order.Contract.Account.Name,Order.Contract.Account.FullName__c,Order.Contract.Account.AccountCode__c,Order.Contract.Account.Phone,
                     Order.Contract.BillingPostalCode,Order.Contract.BillingState,Order.Contract.BillingCity,Order.Contract.BillingStreet,
                     Order.Contract.BillingContact__r.FirstName,Order.Contract.BillingContact__r.LastName,Order.Contract.BillingContact__r.Department,Order.Contract.BillingContact__r.Email
@@ -110,9 +110,17 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
                 invoice.Contract__c = orderItem.Order.ContractId;
                 invoice.IssueCount__c = (Integer)mapRes.get('issueCount');
                 invoice.PageCount__c = (Integer)mapRes.get('pageCount');
+                invoice.OptionIssueCount__c = (Integer)mapRes.get('issuePostalCount');
+                invoice.OptionPageCount__c = (Integer)mapRes.get('pagePostalCount');
                 invoice.IssueUnitPrice__c = orderItem.UnitPrice;
                 invoice.PageUnitPrice__c = orderItem.OvertimeRate__c;
-                invoice.InvoicePrice__c = ((Decimal)invoice.IssueCount__c * invoice.IssueUnitPrice__c) + ((Decimal)invoice.PageCount__c * invoice.PageUnitPrice__c);
+                invoice.OptionIssueUnitPrice__c = orderItem.OptionUnitPrice__c;
+                invoice.OptionPageUnitPrice__c = orderItem.OptionOvertimeRate__c;
+                Decimal issuePrice = (Decimal)invoice.IssueCount__c * invoice.IssueUnitPrice__c;
+                Decimal pagePrice = (Decimal)invoice.PageCount__c * invoice.PageUnitPrice__c;
+                Decimal optionIssuePrice = (Decimal)invoice.OptionIssueCount__c * invoice.optionIssueUnitPrice__c;
+                Decimal optionPagePrice = (Decimal)invoice.OptionPageCount__c * invoice.OptionPageUnitPrice__c;
+                invoice.InvoicePrice__c = issuePrice + pagePrice + optionIssuePrice + optionPagePrice;
                 return invoice;
             } else {
                 throw new OtherException('発行数、ページ数取得でエラーが発生しました: ' + (String)mapRes.get('errorMessage'));

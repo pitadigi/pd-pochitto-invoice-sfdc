@@ -26,6 +26,16 @@
                 <behavior>Edit</behavior>
                 <field>PrivateKey__c</field>
             </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>IsProtected</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>NamespacePrefix</field>
+            </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>UserId__c</field>
@@ -41,16 +51,6 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Locale__c</field>
-            </layoutItems>
-        </layoutColumns>
-        <layoutColumns>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>IsProtected</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>NamespacePrefix</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -76,7 +76,7 @@
     </layoutSections>
     <layoutSections>
         <customLabel>true</customLabel>
-        <detailHeading>false</detailHeading>
+        <detailHeading>true</detailHeading>
         <editHeading>false</editHeading>
         <label>カスタムリンク</label>
         <layoutColumns/>
@@ -90,7 +90,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h0l000001SeT7</masterLabel>
+        <masterLabel>00h1m0000011Pzf</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

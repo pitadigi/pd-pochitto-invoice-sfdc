@@ -231,8 +231,9 @@ public with sharing class pdPIFreee {
         j.writeStringField('notes', 'ご利用期間: ' + this.getDateString(startDate) + ' 〜 ' + this.getDateString(endDate));
         j.writeFieldName('invoice_contents');
         j.writeStartArray();
+        Integer order = 0;
         j.writeStartObject();
-        j.writeNumberField('order', 0);
+        j.writeNumberField('order', order++);
         j.writeStringField('type', 'normal');
         j.writeStringField('description', inv.Name + ' 発行料金');
         j.writeNumberField('qty', inv.IssueCount__c);
@@ -243,12 +244,34 @@ public with sharing class pdPIFreee {
         j.writeEndObject();
         if (inv.PageCount__c != inv.IssueCount__c) {
             j.writeStartObject();
-            j.writeNumberField('order', 1);
+            j.writeNumberField('order', order++);
             j.writeStringField('type', 'normal');
             j.writeStringField('description', inv.Name + ' 超過ページ料金');
             j.writeNumberField('qty', inv.PageCount__c - inv.IssueCount__c);
             j.writeStringField('unit', '枚');
             j.writeNumberField('unit_price', inv.PageUnitPrice__c);
+            j.writeNumberField('account_item_id', accountItem.accountId);
+            j.writeNumberField('tax_code', accountItem.taxCode);
+            j.writeEndObject();
+        }
+        j.writeStartObject();
+        j.writeNumberField('order', order++);
+        j.writeStringField('type', 'normal');
+        j.writeStringField('description', inv.Name + ' オプション発行料金');
+        j.writeNumberField('qty', inv.OptionIssueCount__c);
+        j.writeStringField('unit', '回');
+        j.writeNumberField('unit_price', inv.OptionIssueUnitPrice__c + inv.OptionPageUnitPrice__c);
+        j.writeNumberField('account_item_id', accountItem.accountId);
+        j.writeNumberField('tax_code', accountItem.taxCode);
+        j.writeEndObject();
+        if (inv.OptionPageCount__c != inv.OptionIssueCount__c) {
+            j.writeStartObject();
+            j.writeNumberField('order', order++);
+            j.writeStringField('type', 'normal');
+            j.writeStringField('description', inv.Name + ' オプション超過ページ料金');
+            j.writeNumberField('qty', inv.OptionPageCount__c - inv.OptionIssueCount__c);
+            j.writeStringField('unit', '枚');
+            j.writeNumberField('unit_price', inv.OptionPageUnitPrice__c);
             j.writeNumberField('account_item_id', accountItem.accountId);
             j.writeNumberField('tax_code', accountItem.taxCode);
             j.writeEndObject();

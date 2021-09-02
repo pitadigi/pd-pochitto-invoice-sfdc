@@ -35,14 +35,16 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
     }
 
     /**
-     * 契約の環境を削除する
-     * 環境を削除したら、ポチッと請求環境削除フラグを設定する
+     * 契約ごとの請求書を作成する
+     * APIに前月の利用料を問い合わせ、注文商品の単価で請求金額を算出する
+     * 請求書はfreeeに登録する
      * 発行数が0だったら請求書は作成しない(請求履歴は作成する)
      */
     public void execute(Database.BatchableContext bc, List<OrderItem> lstOrderItem) {
         this.setAggregateRange();
 
         List<Invoice__c> lstInvoice = new List<Invoice__c>();
+        List<Contract> lstContract = new List<Contract>();
 
         pdPIFreee piFreee = new pdPIFreee();
 
@@ -69,11 +71,20 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
 
                 piFreee.registInvoice(this.startDate, this.endDate, account, contact, invoice);
             }
-            
+
             lstInvoice.add(invoice);
+
+            Contract contract = orderItem.Order.Contract;
+            contract.IssueCount__c = invoice.IssueCount__c;
+            contract.PageCount__c = invoice.PageCount__c;
+            contract.OptionIssueCount__c = invoice.OptionIssueCount__c;
+            contract.OptionPageCount__c = invoice.OptionPageCount__c;
+
+            lstContract.add(contract);
         }
 
         insert lstInvoice;
+        update lstContract;
     }
 
     /**

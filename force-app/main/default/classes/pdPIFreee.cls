@@ -254,27 +254,29 @@ public with sharing class pdPIFreee {
             j.writeNumberField('tax_code', accountItem.taxCode);
             j.writeEndObject();
         }
-        j.writeStartObject();
-        j.writeNumberField('order', order++);
-        j.writeStringField('type', 'normal');
-        j.writeStringField('description', inv.Name + ' オプション発行料金');
-        j.writeNumberField('qty', inv.OptionIssueCount__c);
-        j.writeStringField('unit', '回');
-        j.writeNumberField('unit_price', inv.OptionIssueUnitPrice__c + inv.OptionPageUnitPrice__c);
-        j.writeNumberField('account_item_id', accountItem.accountId);
-        j.writeNumberField('tax_code', accountItem.taxCode);
-        j.writeEndObject();
-        if (inv.OptionPageCount__c != inv.OptionIssueCount__c) {
+        if (inv.OptionIssueCount__c != 0) {
             j.writeStartObject();
             j.writeNumberField('order', order++);
             j.writeStringField('type', 'normal');
-            j.writeStringField('description', inv.Name + ' オプション超過ページ料金');
-            j.writeNumberField('qty', inv.OptionPageCount__c - inv.OptionIssueCount__c);
-            j.writeStringField('unit', '枚');
-            j.writeNumberField('unit_price', inv.OptionPageUnitPrice__c);
+            j.writeStringField('description', inv.Name + ' 郵送発行料金');
+            j.writeNumberField('qty', inv.OptionIssueCount__c);
+            j.writeStringField('unit', '回');
+            j.writeNumberField('unit_price', inv.OptionIssueUnitPrice__c + inv.OptionPageUnitPrice__c);
             j.writeNumberField('account_item_id', accountItem.accountId);
             j.writeNumberField('tax_code', accountItem.taxCode);
             j.writeEndObject();
+            if (inv.OptionPageCount__c != inv.OptionIssueCount__c) {
+                j.writeStartObject();
+                j.writeNumberField('order', order++);
+                j.writeStringField('type', 'normal');
+                j.writeStringField('description', inv.Name + ' 郵送超過ページ料金');
+                j.writeNumberField('qty', inv.OptionPageCount__c - inv.OptionIssueCount__c);
+                j.writeStringField('unit', '枚');
+                j.writeNumberField('unit_price', inv.OptionPageUnitPrice__c);
+                j.writeNumberField('account_item_id', accountItem.accountId);
+                j.writeNumberField('tax_code', accountItem.taxCode);
+                j.writeEndObject();
+            }
         }
         j.writeEndArray();
         j.writeEndObject();

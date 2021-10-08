@@ -72,7 +72,7 @@ public with sharing class pdPIRegistration {
                                     ORDER BY LastModifiedDate DESC];
         if (lstContact.size() != 0) {
             contact = lstContact[0];
-            account = [SELECT Id,Name,FullName__c,BillingPostalCode,BillingState,BillingCity,BillingStreet,Phone,Fax
+            account = [SELECT Id,Name,FullName__c,BillingPostalCode,BillingState,BillingCity,BillingStreet,Phone,Fax,AccountCode__c
                         FROM Account
                         WHERE Id=:contact.AccountId
                         LIMIT 1];
@@ -131,6 +131,7 @@ public with sharing class pdPIRegistration {
         contract.Type__c = '月額';
         contract.CloudService__c = serviceApplication.ServiceName__c;
         contract.ContractId__c = contractId;
+        contract.IsFirstBilled__c = false;
         insert contract;
 
         Order order = new Order();
@@ -146,7 +147,11 @@ public with sharing class pdPIRegistration {
         order.CustomerAuthorizedById = contact.Id;
         insert order;
 
-        PricebookEntry pricebookEntry = [SELECT Id,UnitPrice,OvertimeRate__c,OptionUnitPrice__c,OptionOvertimeRate__c FROM PricebookEntry WHERE ProductCode='PI0001' LIMIT 1];
+        PricebookEntry pricebookEntry = [
+            SELECT Id,UnitPrice,OvertimeRate__c,OptionUnitPrice__c,OptionOvertimeRate__c,InitUnitPrice__c
+            FROM PricebookEntry
+            WHERE ProductCode='PI0001' LIMIT 1
+        ];
         Product2 product2 = [SELECT Id FROM Product2 WHERE ProductCode='PI0001' LIMIT 1];
         OrderItem orderItem = new OrderItem();
         orderItem.ListPrice = pricebookEntry.UnitPrice;
@@ -158,6 +163,8 @@ public with sharing class pdPIRegistration {
         orderItem.OvertimeRate__c = pricebookEntry.OvertimeRate__c;
         orderItem.OptionOvertimeRate__c = pricebookEntry.OptionOvertimeRate__c;
         orderItem.PricebookEntryId = pricebookEntry.Id;
+        orderItem.InitCount__c = 1;
+        orderItem.InitUnitPrice__c = pricebookEntry.InitUnitPrice__c;
         insert orderItem;
 
         serviceApplication.Contract__c = contract.Id;

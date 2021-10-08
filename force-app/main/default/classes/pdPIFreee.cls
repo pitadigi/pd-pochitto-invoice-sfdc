@@ -231,7 +231,20 @@ public with sharing class pdPIFreee {
         j.writeStringField('notes', 'ご利用期間: ' + this.getDateString(startDate) + ' 〜 ' + this.getDateString(endDate));
         j.writeFieldName('invoice_contents');
         j.writeStartArray();
+
         Integer order = 0;
+        if (inv.InitCount__c != 0) {
+            j.writeStartObject();
+            j.writeNumberField('order', order++);
+            j.writeStringField('type', 'normal');
+            j.writeStringField('description', inv.Name + ' フォーマット作成料金');
+            j.writeNumberField('qty', inv.InitCount__c);
+            j.writeStringField('unit', '式');
+            j.writeNumberField('unit_price', inv.InitUnitPrice__c);
+            j.writeNumberField('account_item_id', accountItem.accountId);
+            j.writeNumberField('tax_code', accountItem.taxCode);
+            j.writeEndObject();
+        }
         j.writeStartObject();
         j.writeNumberField('order', order++);
         j.writeStringField('type', 'normal');

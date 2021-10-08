@@ -21,9 +21,9 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
 
         return Database.getQueryLocator(
             [
-                SELECT Id,Order.ContractId,Order.Contract.ContractId__c,UnitPrice,OvertimeRate__c,Product2.Name,OptionUnitPrice__c,OptionOvertimeRate__c,
+                SELECT Id,Order.ContractId,Order.Contract.ContractId__c,UnitPrice,OvertimeRate__c,Product2.Name,OptionUnitPrice__c,OptionOvertimeRate__c,InitCount__c,InitUnitPrice__c,
                     Order.Contract.Account.Name,Order.Contract.Account.FullName__c,Order.Contract.Account.AccountCode__c,Order.Contract.Account.Phone,
-                    Order.Contract.BillingPostalCode,Order.Contract.BillingState,Order.Contract.BillingCity,Order.Contract.BillingStreet,
+                    Order.Contract.BillingPostalCode,Order.Contract.BillingState,Order.Contract.BillingCity,Order.Contract.BillingStreet,Order.Contract.IsFirstBilled__c,
                     Order.Contract.BillingContact__r.FirstName,Order.Contract.BillingContact__r.LastName,Order.Contract.BillingContact__r.Department,Order.Contract.BillingContact__r.Email
                 FROM OrderItem
                 WHERE Product2.ProductCode = 'PI0001'
@@ -79,6 +79,7 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
             contract.PageCount__c = invoice.PageCount__c;
             contract.OptionIssueCount__c = invoice.OptionIssueCount__c;
             contract.OptionPageCount__c = invoice.OptionPageCount__c;
+            contract.IsFirstBilled__c = true;
 
             lstContract.add(contract);
         }
@@ -129,9 +130,18 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
                 invoice.OptionPageUnitPrice__c = orderItem.OptionOvertimeRate__c;
                 Decimal issuePrice = (Decimal)invoice.IssueCount__c * invoice.IssueUnitPrice__c;
                 Decimal pagePrice = (Decimal)invoice.PageCount__c * invoice.PageUnitPrice__c;
-                Decimal optionIssuePrice = (Decimal)invoice.OptionIssueCount__c * invoice.optionIssueUnitPrice__c;
+                Decimal optionIssuePrice = (Decimal)invoice.OptionIssueCount__c * invoice.OptionIssueUnitPrice__c;
                 Decimal optionPagePrice = (Decimal)invoice.OptionPageCount__c * invoice.OptionPageUnitPrice__c;
-                invoice.InvoicePrice__c = issuePrice + pagePrice + optionIssuePrice + optionPagePrice;
+                Decimal initPrice = 0;
+                if (!orderItem.Order.Contract.IsFirstBilled__c) {
+                    invoice.InitUnitPrice__c = orderItem.InitUnitPrice__c;
+                    invoice.InitCount__c = orderItem.InitCount__c;
+                    initPrice = orderItem.InitUnitPrice__c * (Decimal)orderItem.InitCount__c;
+                } else {
+                    invoice.InitUnitPrice__c = 0;
+                    invoice.InitCount__c = 0;
+                }
+                invoice.InvoicePrice__c = issuePrice + pagePrice + optionIssuePrice + optionPagePrice + initPrice;
                 return invoice;
             } else {
                 throw new OtherException('発行数、ページ数取得でエラーが発生しました: ' + (String)mapRes.get('errorMessage'));

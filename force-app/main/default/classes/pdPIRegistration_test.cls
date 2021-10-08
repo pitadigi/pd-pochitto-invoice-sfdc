@@ -18,13 +18,14 @@ class pdPIRegistration_test {
             Pricebook2Id = pricebook2.Id,
             Product2Id = product2.Id,
             UnitPrice = 0,
-            IsActive = true
+            IsActive = true,
+            InitUnitPrice__c = 50000
         );
         insert pricebookEntry;
 
         ServiceApplication__c serviceApplication = new ServiceApplication__c();
         serviceApplication.ServiceName__c = 'ポチッと請求';
-        serviceApplication.CompanyName__c = 'ぴたデジ株式会社';
+        serviceApplication.CompanyName__c = '**テスト株式会社';
         serviceApplication.PostalCode__c = '020-0611';
         serviceApplication.State__c = '岩手県';
         serviceApplication.City__c = '滝沢市';

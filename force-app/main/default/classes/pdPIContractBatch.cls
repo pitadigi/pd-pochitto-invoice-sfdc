@@ -18,7 +18,7 @@ public class pdPIContractBatch implements Database.Batchable<sObject>, Database.
                 SELECT Id,ContractId__c,piDeletedUserEnv__c
                 FROM Contract
                 WHERE RecordTypeId = :recordTypeId
-                    AND CloudService__c = 'PochittoInvoice'
+                    AND CloudService__c = 'ポチッと請求'
                     AND ContractId__c != null
                     AND EndDate < :startDate
                     AND piDeletedUserEnv__c = false

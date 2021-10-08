@@ -19,6 +19,7 @@ class pdPIInvoiceBatch_test {
             Product2Id = product2.Id,
             UnitPrice = 35,
             OvertimeRate__c = 15,
+            InitUnitPrice__c = 50000,
             IsActive = true
         );
         insert pricebookEntry;
@@ -55,7 +56,8 @@ class pdPIInvoiceBatch_test {
             BillingPostalCode = '020-0611',
             BillingState = '岩手県',
             BillingCity = '滝沢市',
-            BillingStreet = '巣子１５２番地４０９滝沢市第２イノベーションセンター'
+            BillingStreet = '巣子１５２番地４０９滝沢市第２イノベーションセンター',
+            IsFirstBilled__c = false
         );
         insert contract;
         contract.Status = 'Activated';
@@ -75,8 +77,12 @@ class pdPIInvoiceBatch_test {
             Product2Id = product2.Id,
             UnitPrice = 35,
             OvertimeRate__c = 15,
-            orderId = order.Id,
-            Quantity = 1
+            OrderId = order.Id,
+            Quantity = 1,
+            InitCount__c = 1,
+            InitUnitPrice__c = 50000,
+            OptionUnitPrice__c = 130,
+            OptionOvertimeRate__c = 20
         );
         insert orderItem;
     }

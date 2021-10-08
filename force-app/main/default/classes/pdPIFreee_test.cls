@@ -26,7 +26,13 @@ class pdPIFreee_test {
             IssueUnitPrice__c = 35,
             PageCount__c = 200,
             PageUnitPrice__c = 15,
-            InvoiceDate__c = Date.newInstance(2021, 5, 31)
+            InvoiceDate__c = Date.newInstance(2021, 5, 31),
+            InitCount__c = 1,
+            InitUnitPrice__c = 50000,
+            OptionIssueCount__c = 1,
+            OptionPageCount__c = 2,
+            OptionIssueUnitPrice__c = 130,
+            OptionPageUnitPrice__c = 20
         );
 
         Test.setMock(HttpCalloutMock.class, new pdPIHttpCallout_mock());

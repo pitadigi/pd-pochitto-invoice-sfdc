@@ -90,7 +90,7 @@ public with sharing class pdPIRegistration {
         account.BillingStreet = pdPIRegistration.getStreet(serviceApplication);
         account.Phone = serviceApplication.Phone__c;
         if (String.isBlank(account.AccountCode__c)) {
-            account.AccountCode__c = ContractId;
+            account.AccountCode__c = contractId;
         }
         upsert account;
 

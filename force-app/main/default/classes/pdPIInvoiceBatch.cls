@@ -22,14 +22,14 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
         return Database.getQueryLocator(
             [
                 SELECT Id,Order.ContractId,Order.Contract.ContractId__c,UnitPrice,OvertimeRate__c,Product2.Name,OptionUnitPrice__c,OptionOvertimeRate__c,InitCount__c,InitUnitPrice__c,
-                    Order.Contract.Account.Name,Order.Contract.Account.FullName__c,Order.Contract.Account.AccountCode__c,Order.Contract.Account.Phone,
+                    Order.Contract.Account.Name,Order.Contract.Account.FullName__c,Order.Contract.Account.AccountCode__c,Order.Contract.Account.Phone,Order.Contract.InvoiceStartDate__c,
                     Order.Contract.BillingPostalCode,Order.Contract.BillingState,Order.Contract.BillingCity,Order.Contract.BillingStreet,Order.Contract.IsFirstBilled__c,
                     Order.Contract.BillingContact__r.FirstName,Order.Contract.BillingContact__r.LastName,Order.Contract.BillingContact__r.Department,Order.Contract.BillingContact__r.Email
                 FROM OrderItem
                 WHERE Product2.ProductCode = 'PI0001'
                     AND Order.ContractId != null
                     AND Order.Contract.NoInvoice__c != true
-                    AND (Order.Contract.Status = 'Activated' OR (Order.Contract.Status = 'Closed' AND Order.Contract.EndDate >= :this.startDate AND Order.Contract.EndDate <= :this.endDate))
+                    AND ((Order.Contract.Status = 'Activated' AND Order.Contract.InvoiceStartDate__c >= :this.startDate) OR (Order.Contract.Status = 'Closed' AND Order.Contract.EndDate >= :this.startDate AND Order.Contract.EndDate <= :this.endDate))
             ]
         );
     }
@@ -97,15 +97,21 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
     /**
      * APIから先月分の発行数とページ数を取得する
      * 発行数 x 単価 + ページ数 x 超過単価で利用料金を算出する
+     * 集計開始日が契約情報の請求開始日と同月の場合は契約開始日を集計開始日とする
      */
     private Invoice__c aggregateInvoice(OrderItem orderItem) {
         String accessToken = pdPIAuth0.getAccessToken('API');
 
+        Date startDate = this.startDate;
+        if (this.startDate.year() == orderItem.Order.Contract.InvoiceStartDate__c.year()
+            && this.startDate.month() == orderItem.Order.Contract.InvoiceStartDate__c.month()) {
+            startDate = orderItem.Order.Contract.InvoiceStartDate__c;
+        }
         Http http = new Http();
         HttpRequest req = new HttpRequest();
         req.setMethod('GET');
         String param = 'contract_id=' + orderItem.Order.Contract.ContractId__c + 
-            '&startDate=' + this.getDateString(this.startDate) +
+            '&startDate=' + this.getDateString(startDate) +
             '&endDate=' + this.getDateString(this.endDate);
         req.setEndpoint('callout:PochittoInvoiceApi/api/maintenance/invoice?' + param);
         req.setHeader('content-type', 'application/json');

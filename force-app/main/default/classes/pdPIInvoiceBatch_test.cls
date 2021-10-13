@@ -57,7 +57,8 @@ class pdPIInvoiceBatch_test {
             BillingState = '岩手県',
             BillingCity = '滝沢市',
             BillingStreet = '巣子１５２番地４０９滝沢市第２イノベーションセンター',
-            IsFirstBilled__c = false
+            IsFirstBilled__c = false,
+            TrialSpanMonths__c = 1
         );
         insert contract;
         contract.Status = 'Activated';

@@ -92,7 +92,7 @@ public with sharing class pdPIFreee {
         j.writeStringField('shortcut2', acc.AccountCode__c);
         j.writeStringField('default_title', '御中');
         j.writeStringField('phone', acc.Phone);
-        String contactName;
+        String contactName = '';
         if (!String.isBlank(con.Department)) {
             contactName = con.Department + ' / ';
         }

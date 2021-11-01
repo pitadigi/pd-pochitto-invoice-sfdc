@@ -194,7 +194,7 @@ public with sharing class pdPIFreee {
                 if ((String)mapAccountItem.get('name') == '売上高') {
                     accountItem.accountId = (Long)mapAccountItem.get('id');
                     accountItem.accountName = (String)mapAccountItem.get('name');
-                    accountItem.taxCode = (Long)mapAccountItem.get('tax_code');
+                    accountItem.taxCode = (Long)mapAccountItem.get('default_tax_code');
                     break;
                 }
             }

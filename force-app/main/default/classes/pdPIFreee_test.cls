@@ -40,7 +40,7 @@ class pdPIFreee_test {
         Test.startTest();
 
         pdPIFreee piFreee = new pdPIFreee();
-        piFreee.registInvoice(startDate, endDate, account, contact, invoice);
+        piFreee.registInvoice(startDate, endDate, startDate, account, contact, invoice);
 
         Test.stopTest();
     }

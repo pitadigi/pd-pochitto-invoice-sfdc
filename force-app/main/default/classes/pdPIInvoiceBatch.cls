@@ -49,7 +49,13 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
         pdPIFreee piFreee = new pdPIFreee();
 
         for (OrderItem orderItem: lstOrderItem) {
-            Invoice__c invoice = this.aggregateInvoice(orderItem);
+            Date invoiceStartDate = this.startDate;
+            if (this.startDate.year() == orderItem.Order.Contract.InvoiceStartDate__c.year()
+                && this.startDate.month() == orderItem.Order.Contract.InvoiceStartDate__c.month()) {
+                    invoiceStartDate = orderItem.Order.Contract.InvoiceStartDate__c;
+            }
+
+            Invoice__c invoice = this.aggregateInvoice(orderItem, invoiceStartDate);
 
             if (invoice.IssueCount__c != 0) {
                 Account account = new Account(
@@ -69,7 +75,7 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
                     Email = orderItem.Order.Contract.BillingContact__r.Email
                 );
 
-                piFreee.registInvoice(this.startDate, this.endDate, account, contact, invoice);
+                piFreee.registInvoice(this.startDate, this.endDate, invoiceStartDate, account, contact, invoice);
             }
 
             lstInvoice.add(invoice);
@@ -99,19 +105,14 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
      * 発行数 x 単価 + ページ数 x 超過単価で利用料金を算出する
      * 集計開始日が契約情報の請求開始日と同月の場合は契約開始日を集計開始日とする
      */
-    private Invoice__c aggregateInvoice(OrderItem orderItem) {
+    private Invoice__c aggregateInvoice(OrderItem orderItem, Date invoiceStartDate) {
         String accessToken = pdPIAuth0.getAccessToken('API');
 
-        Date startDate = this.startDate;
-        if (this.startDate.year() == orderItem.Order.Contract.InvoiceStartDate__c.year()
-            && this.startDate.month() == orderItem.Order.Contract.InvoiceStartDate__c.month()) {
-            startDate = orderItem.Order.Contract.InvoiceStartDate__c;
-        }
         Http http = new Http();
         HttpRequest req = new HttpRequest();
         req.setMethod('GET');
         String param = 'contract_id=' + orderItem.Order.Contract.ContractId__c + 
-            '&startDate=' + this.getDateString(startDate) +
+            '&startDate=' + this.getDateString(invoiceStartDate) +
             '&endDate=' + this.getDateString(this.endDate);
         req.setEndpoint('callout:PochittoInvoiceApi/api/maintenance/invoice?' + param);
         req.setHeader('content-type', 'application/json');

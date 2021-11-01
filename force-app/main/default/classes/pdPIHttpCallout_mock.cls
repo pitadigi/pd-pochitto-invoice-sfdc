@@ -77,7 +77,7 @@ global class pdPIHttpCallout_mock implements HttpCalloutMock {
         else if(endPoint.startsWith('callout:Freee/account_items')) {
             if(method == 'GET') {
                 res.setStatusCode(200);
-                String body = '{"account_items": [{"id": 12345678, "name": "売上高", "tax_code": 123}]}';
+                String body = '{"account_items": [{"id": 12345678, "name": "売上高", "default_tax_code": 123}]}';
                 res.setBody(body);
             }
         }

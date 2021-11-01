@@ -207,7 +207,7 @@ public with sharing class pdPIFreee {
     /**
      * 請求書情報をFreeeに登録する
      */
-    public void registInvoice(Date startDate, Date endDate, Account acc, Contact con, Invoice__c inv) {
+    public void registInvoice(Date startDate, Date endDate, Date invoiceStartDate, Account acc, Contact con, Invoice__c inv) {
         Long companyId = this.getCompanyId();
 
         AccountItem accountItem = this.getSalesAccount(companyId, endDate);
@@ -228,7 +228,7 @@ public with sharing class pdPIFreee {
         j.writeStringField('partner_title', '御中');
         j.writeStringField('partner_contact_info', con.LastName + ' ' + con.FirstName);
         j.writeStringField('payment_type', 'transfer');
-        j.writeStringField('notes', 'ご利用期間: ' + this.getDateString(startDate) + ' 〜 ' + this.getDateString(endDate));
+        j.writeStringField('notes', 'ご利用期間: ' + this.getDateString(invoiceStartDate) + ' 〜 ' + this.getDateString(endDate));
         j.writeFieldName('invoice_contents');
         j.writeStartArray();
 

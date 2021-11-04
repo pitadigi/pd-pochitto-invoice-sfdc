@@ -210,31 +210,34 @@ public with sharing class pdPIFreee {
      * 注文を元にfreeeに請求書を登録し、freee請求書IDを設定する
      */
     public void registInvoiceByOrder(Id orderId) {
-        Order order = [SELECT Id FROM Order WHERE Id=:orderId LIMIT 1];
-        List<OrderItem> lstOrderItem = [SELECT Id FROM OrderItem WHERE OrderId=:orderId];
+        Order order = [SELECT Id,EndDate,Name,BillToContactId,AccountId FROM Order WHERE Id=:orderId LIMIT 1];
+        List<OrderItem> lstOrderItem = [SELECT Id,Description,Quantity,Unit__c,UnitPrice FROM OrderItem WHERE OrderId=:orderId ORDER BY SortOrder__c];
+        Account acc = [SELECT Id,Name,FullName__c,AccountCode__c,Phone,BillingPostalCode,BillingState,BillingCity,BillingStreet
+                        FROM Account WHERE Id=:order.AccountId LIMIT 1];
+        Contact con = [SELECT Id,Department,LastName,FirstName,Email FROM Contact WHERE Id=:order.BillToContactId LIMIT 1];
 
-        if (order.Type != '一括' || order.ContractEndDate == null) {
+        if (order.Type != '一括' || order.EndDate == null) {
             return;
         }
 
         Long companyId = this.getCompanyId();
 
         if (order.freeeInvoiceId__c != null) {
-            this.deleteDeal(companyId, order.freeeInvoiceId__c);
+            this.deleteInvoice(companyId, order.freeeInvoiceId__c);
         }
 
-        AccountItem accountItem = this.getSalesAccount(companyId, order.ContractEndDate);
+        AccountItem accountItem = this.getSalesAccount(companyId, order.EndDate);
 
         Long partnerId = this.registPartner(companyId, acc, con);
 
         JSONGenerator j = JSON.createGenerator(false);
         j.writeStartObject();
         j.writeNumberField('company_id', companyId);
-        j.writeStringField('issue_date', this.getDateString(order.ContractEndDate));
+        j.writeStringField('issue_date', this.getDateString(order.EndDate));
         j.writeNumberField('partner_id', partnerId);
-        Date dueDate = order.ContractEndDate.addMonths(2).addDays(-1);
+        Date dueDate = order.EndDate.addMonths(2).addDays(-1);
         j.writeStringField('due_date', this.getDateString(dueDate));
-        j.writeStringField('booking_date', this.getDateString(order.ContractEndDate));
+        j.writeStringField('booking_date', this.getDateString(order.EndDate));
         j.writeStringField('description', order.Name);
         j.writeStringField('invoice_status', 'draft');
         j.writeStringField('partner_display_name', acc.FullName__c);
@@ -242,19 +245,21 @@ public with sharing class pdPIFreee {
         j.writeStringField('partner_contact_info', con.LastName + ' ' + con.FirstName);
         j.writeStringField('payment_type', 'transfer');
         j.writeFieldName('invoice_contents');
-        j.writeStartArray();
 
-        Integer order = 0;
-        j.writeStartObject();
-        j.writeNumberField('order', order++);
-        j.writeStringField('type', 'normal');
-        j.writeStringField('description', inv.Name + ' 発行料金');
-        j.writeNumberField('qty', inv.IssueCount__c);
-        j.writeStringField('unit', '回');
-        j.writeNumberField('unit_price', inv.IssueUnitPrice__c + inv.PageUnitPrice__c);
-        j.writeNumberField('account_item_id', accountItem.accountId);
-        j.writeNumberField('tax_code', accountItem.taxCode);
-        j.writeEndObject();
+        j.writeStartArray();
+        Integer rowOrder = 0;
+        for (OrderItem orderItem : lstOrderItem) {
+            j.writeStartObject();
+            j.writeNumberField('order', rowOrder++);
+            j.writeStringField('type', 'normal');
+            j.writeStringField('description', orderItem.Description);
+            j.writeNumberField('qty', orderItem.Quantity);
+            j.writeStringField('unit', orderItem.Unit__c);
+            j.writeNumberField('unit_price', orderItem.UnitPrice);
+            j.writeNumberField('account_item_id', accountItem.accountId);
+            j.writeNumberField('tax_code', accountItem.taxCode);
+            j.writeEndObject();
+        }
         j.writeEndArray();
         j.writeEndObject();
 
@@ -277,7 +282,7 @@ public with sharing class pdPIFreee {
      * @param companyId 会社ID
      * @param invoiceId 請求書ID
      */
-    private void deleteInvoice(Long companyId, Long invoiceId) {
+    private void deleteInvoice(Long companyId, Decimal invoiceId) {
         JSONGenerator j = JSON.createGenerator(false);
         j.writeStartObject();
         j.writeNumberField('id', invoiceId);

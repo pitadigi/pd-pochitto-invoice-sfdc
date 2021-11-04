@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Payment__c</fullName>
+    <fullName>TransferFee__c</fullName>
     <externalId>false</externalId>
-    <label>支払方法</label>
+    <label>振込手数料負担</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
@@ -12,14 +12,14 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>請求書</fullName>
+                <fullName>お客様</fullName>
                 <default>false</default>
-                <label>請求書</label>
+                <label>お客様</label>
             </value>
             <value>
-                <fullName>PayPal</fullName>
+                <fullName>当社</fullName>
                 <default>false</default>
-                <label>PayPal</label>
+                <label>当社</label>
             </value>
         </valueSetDefinition>
     </valueSet>

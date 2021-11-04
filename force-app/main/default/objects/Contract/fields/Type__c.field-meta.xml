@@ -4,6 +4,7 @@
     <externalId>false</externalId>
     <label>契約形態</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <type>Picklist</type>
     <valueSet>
@@ -12,7 +13,7 @@
             <sorted>false</sorted>
             <value>
                 <fullName>月額</fullName>
-                <default>false</default>
+                <default>true</default>
                 <label>月額</label>
             </value>
             <value>

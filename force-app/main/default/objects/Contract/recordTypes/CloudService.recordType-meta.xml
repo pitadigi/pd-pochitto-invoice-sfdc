@@ -2,12 +2,13 @@
 <RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>CloudService</fullName>
     <active>true</active>
+    <compactLayoutAssignment>CloudService</compactLayoutAssignment>
     <label>クラウドサービス</label>
     <picklistValues>
         <picklist>CloudService__c</picklist>
         <values>
             <fullName>ポチッと請求</fullName>
-            <default>false</default>
+            <default>true</default>
         </values>
     </picklistValues>
     <picklistValues>
@@ -40,6 +41,10 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>In Confirm</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>In Progress</fullName>
             <default>false</default>
         </values>
@@ -47,8 +52,15 @@
             <fullName>Trial</fullName>
             <default>false</default>
         </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TransferFee__c</picklist>
         <values>
-            <fullName>In Confirm</fullName>
+            <fullName>お客様</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>当社</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -60,7 +72,7 @@
         </values>
         <values>
             <fullName>月額</fullName>
-            <default>false</default>
+            <default>true</default>
         </values>
     </picklistValues>
 </RecordType>

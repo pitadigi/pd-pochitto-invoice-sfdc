@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>CloudService__c</fullName>
+    <fullName>ContractURL__c</fullName>
     <externalId>false</externalId>
-    <label>クラウドサービス</label>
+    <label>契約書URL</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
-    <type>Picklist</type>
-    <valueSet>
-        <restricted>true</restricted>
-        <valueSetName>CloudService</valueSetName>
-    </valueSet>
+    <type>Url</type>
 </CustomField>

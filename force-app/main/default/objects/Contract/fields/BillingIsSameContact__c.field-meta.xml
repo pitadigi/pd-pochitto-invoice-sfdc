@@ -4,6 +4,7 @@
     <defaultValue>true</defaultValue>
     <externalId>false</externalId>
     <label>請求先は取引先責任者と同じ</label>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

@@ -72,6 +72,8 @@ global class pdPIHttpCallout_mock implements HttpCalloutMock {
         else if(endPoint.startsWith('callout:Freee/invoices')) {
             if(method == 'POST') {
                 res.setStatusCode(201);
+            } else if(method == 'DELETE') {
+                res.setStatusCode(204);
             }
         }
         else if(endPoint.startsWith('callout:Freee/account_items')) {

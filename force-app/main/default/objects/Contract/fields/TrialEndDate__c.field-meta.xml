@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>ContractId__c</fullName>
+    <fullName>TrialEndDate__c</fullName>
     <externalId>false</externalId>
-    <label>クラウドサービス契約ID</label>
-    <length>255</length>
+    <formula>ADDMONTHS( StartDate , TrialSpanMonths__c )</formula>
+    <label>トライアル終了日</label>
     <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
-    <type>Text</type>
-    <unique>false</unique>
+    <type>Date</type>
 </CustomField>

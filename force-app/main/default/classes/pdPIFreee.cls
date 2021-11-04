@@ -205,6 +205,99 @@ public with sharing class pdPIFreee {
     }
 
     /**
+     * 注文情報を元にfreeeに請求書を登録する
+     * 注文にfreee請求書IDが設定されていたら削除する。削除でエラーが発生しても無視する
+     * 注文を元にfreeeに請求書を登録し、freee請求書IDを設定する
+     */
+    public void registInvoiceByOrder(Id orderId) {
+        Order order = [SELECT Id FROM Order WHERE Id=:orderId LIMIT 1];
+        List<OrderItem> lstOrderItem = [SELECT Id FROM OrderItem WHERE OrderId=:orderId];
+
+        if (order.Type != '一括' || order.ContractEndDate == null) {
+            return;
+        }
+
+        Long companyId = this.getCompanyId();
+
+        if (order.freeeInvoiceId__c != null) {
+            this.deleteDeal(companyId, order.freeeInvoiceId__c);
+        }
+
+        AccountItem accountItem = this.getSalesAccount(companyId, order.ContractEndDate);
+
+        Long partnerId = this.registPartner(companyId, acc, con);
+
+        JSONGenerator j = JSON.createGenerator(false);
+        j.writeStartObject();
+        j.writeNumberField('company_id', companyId);
+        j.writeStringField('issue_date', this.getDateString(order.ContractEndDate));
+        j.writeNumberField('partner_id', partnerId);
+        Date dueDate = order.ContractEndDate.addMonths(2).addDays(-1);
+        j.writeStringField('due_date', this.getDateString(dueDate));
+        j.writeStringField('booking_date', this.getDateString(order.ContractEndDate));
+        j.writeStringField('description', order.Name);
+        j.writeStringField('invoice_status', 'draft');
+        j.writeStringField('partner_display_name', acc.FullName__c);
+        j.writeStringField('partner_title', '御中');
+        j.writeStringField('partner_contact_info', con.LastName + ' ' + con.FirstName);
+        j.writeStringField('payment_type', 'transfer');
+        j.writeFieldName('invoice_contents');
+        j.writeStartArray();
+
+        Integer order = 0;
+        j.writeStartObject();
+        j.writeNumberField('order', order++);
+        j.writeStringField('type', 'normal');
+        j.writeStringField('description', inv.Name + ' 発行料金');
+        j.writeNumberField('qty', inv.IssueCount__c);
+        j.writeStringField('unit', '回');
+        j.writeNumberField('unit_price', inv.IssueUnitPrice__c + inv.PageUnitPrice__c);
+        j.writeNumberField('account_item_id', accountItem.accountId);
+        j.writeNumberField('tax_code', accountItem.taxCode);
+        j.writeEndObject();
+        j.writeEndArray();
+        j.writeEndObject();
+
+        Http http = new Http();
+        String path = 'callout:Freee/invoices';
+
+        HttpRequest req = new HttpRequest();
+        req.setHeader('Content-Type', 'application/json');
+        req.setBody(j.getAsString());
+        req.setMethod('POST');
+        req.setEndpoint(path);
+        HttpResponse res = http.send(req);
+        if (res.getStatusCode() != 201) {
+            throw new OtherException(this.getApiErrorMessage(res.getBody()));
+        }
+    }
+
+    /**
+     * freeeの請求書を削除する
+     * @param companyId 会社ID
+     * @param invoiceId 請求書ID
+     */
+    private void deleteInvoice(Long companyId, Long invoiceId) {
+        JSONGenerator j = JSON.createGenerator(false);
+        j.writeStartObject();
+        j.writeNumberField('id', invoiceId);
+        j.writeNumberField('company_id', companyId);
+        j.writeEndObject();
+
+        Http http = new Http();
+        String path = 'callout:Freee/invoices';
+
+        HttpRequest req = new HttpRequest();
+        req.setHeader('Content-Type', 'application/json');
+        req.setBody(j.getAsString());
+
+        req.setMethod('DELETE');
+        req.setEndpoint(path + '/' + String.valueOf(invoiceId));
+
+        HttpResponse res = http.send(req);
+    }
+
+    /**
      * 請求書情報をFreeeに登録する
      */
     public void registInvoice(Date startDate, Date endDate, Date invoiceStartDate, Account acc, Contact con, Invoice__c inv) {

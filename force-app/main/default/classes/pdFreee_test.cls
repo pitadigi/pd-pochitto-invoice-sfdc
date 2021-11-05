@@ -85,7 +85,7 @@ class pdFreee_test {
 
         Test.startTest();
 
-        pdFreee.registInvoiceByOrders(lstOrderId);
+        pdFreee.registInvoiceByOrder(lstOrderId);
 
         Test.stopTest();
     }

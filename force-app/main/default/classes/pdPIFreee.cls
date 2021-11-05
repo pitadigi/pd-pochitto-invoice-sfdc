@@ -220,14 +220,14 @@ public with sharing class pdPIFreee {
                         FROM Account WHERE Id=:order.AccountId LIMIT 1];
         Contact con = [SELECT Id,Department,LastName,FirstName,Email FROM Contact WHERE Id=:order.BillToContactId LIMIT 1];
 
-        if (order.Type != '一括' || order.EndDate == null || order.Status != 'Activated') {
-            return;
-        }
-
         Long companyId = this.getCompanyId();
 
         if (order.freeeInvoiceId__c != null) {
             this.deleteInvoice(companyId, order.freeeInvoiceId__c);
+        }
+
+        if (order.Type != '一括' || order.EndDate == null || order.Status != 'Activated') {
+            return;
         }
 
         AccountItem accountItem = this.getSalesAccount(companyId, order.EndDate);

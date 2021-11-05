@@ -22,6 +22,26 @@ class pdPIFreee_test {
             AccountId = account.Id
         );
         insert contact;
+    
+        Pricebook2 pricebook2 = new Pricebook2(
+            Id = Test.getStandardPricebookId(),
+            IsActive = true
+        );
+        update pricebook2;
+
+        Product2 product2 = new Product2(
+            Name = 'システム開発',
+            ProductCode = 'DV0001'
+        );
+        insert product2;
+
+        PricebookEntry pricebookEntry = new PricebookEntry(
+            Pricebook2Id = pricebook2.Id,
+            Product2Id = product2.Id,
+            UnitPrice = 600000,
+            IsActive = true
+        );
+        insert pricebookEntry;
 
         Contract contract = new Contract(
             Name = 'Test',
@@ -54,7 +74,8 @@ class pdPIFreee_test {
             EffectiveDate = Date.newInstance(2021, 10, 1),
             EndDate = Date.newInstance(2021, 12, 31),
             AccountId = account.Id,
-            BillToContactId = contact.Id
+            BillToContactId = contact.Id,
+            Pricebook2Id = pricebook2.Id
         );
         insert order;
 
@@ -64,7 +85,8 @@ class pdPIFreee_test {
             Quantity = 1,
             Unit__c = '式',
             UnitPrice = 200,
-            SortOrder__c = 1
+            SortOrder__c = 1,
+            PricebookEntryId = pricebookEntry.Id
         );
         insert orderItem;
 
@@ -75,8 +97,8 @@ class pdPIFreee_test {
         Date startDate = Date.newInstance(2021, 5, 1);
         Date endDate = Date.newInstance(2021, 5, 31);
 
-        Account account = [SELECT Id,Name,FullName__c,Phone,BillingPostalCode,BillingState,BillingCity,BillingStreet FROM Account WHERE Name='Test' LIMIT 1];
-        Contact contact = [SELECT Id,FirstName,LastName,Email FROM Contact WHERE AccountId=:account.Id AND Name='Test'];
+        Account account = [SELECT Id,Name,FullName__c,Phone,BillingPostalCode,BillingState,BillingCity,BillingStreet,AccountCode__c FROM Account WHERE Name='Test' LIMIT 1];
+        Contact contact = [SELECT Id,FirstName,LastName,Email,Department FROM Contact WHERE AccountId=:account.Id AND FirstName='test' AND LastName='test'];
         Invoice__c invoice = [SELECT Id,Name,IssueCount__c,IssueUnitPrice__c,PageCount__c,PageUnitPrice__c,InvoiceDate__c,InitCount__c,InitUnitPrice__c,
                                 OptionIssueCount__c,OptionPageCount__c,OptionIssueUnitPrice__c,OptionPageUnitPrice__c
                                 FROM Invoice__c WHERE Name='Test' LIMIT 1];
@@ -87,6 +109,20 @@ class pdPIFreee_test {
 
         pdPIFreee piFreee = new pdPIFreee();
         piFreee.registInvoice(startDate, endDate, startDate, account, contact, invoice);
+
+        Test.stopTest();
+    }
+
+    @isTest
+    static void test_registInvoiceByOrder() {
+        Id orderId = [SELECT Id FROM Order WHERE Name='Test' LIMIT 1].Id;
+
+        Test.setMock(HttpCalloutMock.class, new pdPIHttpCallout_mock());
+
+        Test.startTest();
+
+        pdPIFreee piFreee = new pdPIFreee();
+        piFreee.registInvoiceByOrder(orderId);
 
         Test.stopTest();
     }

@@ -207,16 +207,20 @@ public with sharing class pdPIFreee {
     /**
      * 注文情報を元にfreeeに請求書を登録する
      * 注文にfreee請求書IDが設定されていたら削除する。削除でエラーが発生しても無視する
+     * 注文が以下の状況であれば何もしない
+     * * 種別が一括でない
+     * * 注文終了日がnull
+     * * 状況が有効以外
      * 注文を元にfreeeに請求書を登録し、freee請求書IDを設定する
      */
     public void registInvoiceByOrder(Id orderId) {
-        Order order = [SELECT Id,EndDate,Name,BillToContactId,AccountId FROM Order WHERE Id=:orderId LIMIT 1];
+        Order order = [SELECT Id,EndDate,Name,BillToContactId,AccountId,Type,Status,freeeInvoiceId__c FROM Order WHERE Id=:orderId LIMIT 1];
         List<OrderItem> lstOrderItem = [SELECT Id,Description,Quantity,Unit__c,UnitPrice FROM OrderItem WHERE OrderId=:orderId ORDER BY SortOrder__c];
         Account acc = [SELECT Id,Name,FullName__c,AccountCode__c,Phone,BillingPostalCode,BillingState,BillingCity,BillingStreet
                         FROM Account WHERE Id=:order.AccountId LIMIT 1];
         Contact con = [SELECT Id,Department,LastName,FirstName,Email FROM Contact WHERE Id=:order.BillToContactId LIMIT 1];
 
-        if (order.Type != '一括' || order.EndDate == null) {
+        if (order.Type != '一括' || order.EndDate == null || order.Status != 'Activated') {
             return;
         }
 
@@ -235,7 +239,7 @@ public with sharing class pdPIFreee {
         j.writeNumberField('company_id', companyId);
         j.writeStringField('issue_date', this.getDateString(order.EndDate));
         j.writeNumberField('partner_id', partnerId);
-        Date dueDate = order.EndDate.addMonths(2).addDays(-1);
+        Date dueDate = order.EndDate.addMonths(2).toStartOfMonth().addDays(-1);
         j.writeStringField('due_date', this.getDateString(dueDate));
         j.writeStringField('booking_date', this.getDateString(order.EndDate));
         j.writeStringField('description', order.Name);
@@ -275,6 +279,11 @@ public with sharing class pdPIFreee {
         if (res.getStatusCode() != 201) {
             throw new OtherException(this.getApiErrorMessage(res.getBody()));
         }
+
+        Map<String, Object> mapBody = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
+        Map<String, Object> mapInvoice = (Map<String, Object>)mapBody.get('invoice');
+        order.freeeInvoiceId__c = (Long)mapInvoice.get('id');
+        update order;
     }
 
     /**

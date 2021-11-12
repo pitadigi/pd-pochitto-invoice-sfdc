@@ -175,7 +175,12 @@ public with sharing class pdPIRegistration {
      * 町名番地を取得する
      */
     private static String getStreet(ServiceApplication__c serviceApplication) {
-        return serviceApplication.Street__c + '\r\n' + serviceApplication.Bill__c;
+        String result = serviceApplication.Street__c;
+        if (!String.isBlank(serviceApplication.Bill__c)) {
+            result += '\r\n' + serviceApplication.Bill__c;
+        }
+
+        return result;
     }
 
     /**

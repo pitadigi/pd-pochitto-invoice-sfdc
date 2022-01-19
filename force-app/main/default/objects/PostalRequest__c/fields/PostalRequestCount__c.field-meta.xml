@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PostalRequestCount__c</fullName>
+    <externalId>false</externalId>
+    <label>郵送依頼数</label>
+    <summarizedField>PostalRequestDetail__c.PostalRequestCount__c</summarizedField>
+    <summaryForeignKey>PostalRequestDetail__c.PostalRequest__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

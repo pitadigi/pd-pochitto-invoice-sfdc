@@ -142,6 +142,26 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>PostalRequestDetail__c.PostalRequestCount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>PostalRequest__c.Completed__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>PostalRequest__c.IssueCount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>PostalRequest__c.PostalRequestCount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>PricebookEntry.OptionOvertimeRate__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -260,6 +280,24 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>false</modifyAllRecords>
+        <object>PostalRequestDetail__c</object>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>PostalRequest__c</object>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
         <object>ServiceApplication__c</object>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
@@ -271,4 +309,8 @@
         <recordType>Contract.Normal</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
+    <tabSettings>
+        <tab>PostalRequest__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

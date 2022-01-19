@@ -45,6 +45,13 @@ global class pdPIHttpCallout_mock implements HttpCalloutMock {
                 res.setBody(body);
             }
         }
+        else if (endPoint.startsWith('callout:PochittoInvoiceApi/api/maintenance/postal')) {
+            if (method == 'GET') {
+                res.setStatusCode(200);
+                String body = '{"issuePostal": [{"issueCount": 2,"contractId": "dev"},{"issueCount": 1,"contractId": "test"}],"result": "OK"}';
+                res.setBody(body);
+            }
+        }
         else if (endPoint == 'callout:Freee/companies') {
             if (method == 'GET') {
                 res.setStatusCode(200);

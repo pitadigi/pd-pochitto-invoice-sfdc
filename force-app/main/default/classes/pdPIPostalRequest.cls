@@ -27,21 +27,23 @@ public with sharing class pdPIPostalRequest {
             Map<String, Object> mapRes = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
             String result = (String)mapRes.get('result');
             if (result == 'OK') {
-                PostalRequest__c postalRequest = new PostalRequest__c();
-                postalRequest.Name = yesterday;
-                insert postalRequest;
                 List<Object> lstIssuePostal = (List<Object>)mapRes.get('issuePostal');
-                List<PostalRequestDetail__c> lstPostalRequestDetail = new List<PostalRequestDetail__c>();
-                for (Object obj : lstIssuePostal) {
-                    Map<String,Object> item = (Map<String,Object>)obj;
-                    PostalRequestDetail__c postalRequestDetail = new PostalRequestDetail__c();
-                    postalRequestDetail.PostalRequest__c = postalRequest.Id;
-                    postalRequestDetail.Name = (String)item.get('contractId');
-                    postalRequestDetail.PostalRequestCount__c = (Long)item.get('issueCount');
-                    lstPostalRequestDetail.add(postalRequestDetail);
+                if (lstIssuePostal.size() != 0) {
+                    PostalRequest__c postalRequest = new PostalRequest__c();
+                    postalRequest.Name = yesterday;
+                    insert postalRequest;
+                    List<PostalRequestDetail__c> lstPostalRequestDetail = new List<PostalRequestDetail__c>();
+                    for (Object obj : lstIssuePostal) {
+                        Map<String,Object> item = (Map<String,Object>)obj;
+                        PostalRequestDetail__c postalRequestDetail = new PostalRequestDetail__c();
+                        postalRequestDetail.PostalRequest__c = postalRequest.Id;
+                        postalRequestDetail.Name = (String)item.get('contractId');
+                        postalRequestDetail.PostalRequestCount__c = (Long)item.get('issueCount');
+                        lstPostalRequestDetail.add(postalRequestDetail);
+                    }
+    
+                    insert lstPostalRequestDetail;
                 }
-
-                insert lstPostalRequestDetail;
             } else {
                 throw new OtherException('郵送依頼状況取得でエラーが発生しました: ' + (String)mapRes.get('errorMessage'));
             }

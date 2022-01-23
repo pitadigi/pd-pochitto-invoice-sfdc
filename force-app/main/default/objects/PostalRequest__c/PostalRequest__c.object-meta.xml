@@ -155,8 +155,9 @@
     <externalSharingModel>Private</externalSharingModel>
     <label>郵送依頼</label>
     <nameField>
-        <label>郵送依頼日</label>
-        <type>Text</type>
+        <displayFormat>PR-{YYYY}{MM}{DD}-{000}</displayFormat>
+        <label>郵送依頼ID</label>
+        <type>AutoNumber</type>
     </nameField>
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>

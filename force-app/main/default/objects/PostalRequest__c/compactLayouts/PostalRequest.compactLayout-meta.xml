@@ -2,6 +2,7 @@
 <CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>PostalRequest</fullName>
     <fields>Name</fields>
+    <fields>PostalRequestDate__c</fields>
     <fields>PostalRequestCount__c</fields>
     <fields>IssueCount__c</fields>
     <fields>Completed__c</fields>

@@ -68,10 +68,10 @@ public with sharing class pdPIPostalRequest {
     public static List<PostalRequest__c> getPostalRequest(Boolean completed) {
         List<PostalRequest__c> lstPostalRequest;
         if (completed) {
-            lstPostalRequest = [SELECT PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
+            lstPostalRequest = [SELECT Id,PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
                                 FROM PostalRequest__c WHERE Completed__c=:completed ORDER BY PostalRequestDate__c DESC LIMIT 30];
         } else {
-            lstPostalRequest = [SELECT PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
+            lstPostalRequest = [SELECT Id,PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
                                 FROM PostalRequest__c WHERE Completed__c=:completed ORDER BY PostalRequestDate__c LIMIT 1000];
         }
 

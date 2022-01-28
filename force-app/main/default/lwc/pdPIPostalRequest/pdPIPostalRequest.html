@@ -1,3 +1,4 @@
+<!-- sldsValidatorIgnore -->
 <template>
   <div class="slds-page-header" role="banner">
     <div class="slds-page-header__row">
@@ -33,22 +34,23 @@
         <lightning-layout horizontal-align="spread" multiple-rows="true">
           <template if:true={postalRequests.data}>
             <template for:each={postalRequests.data} for:item="item">
-              <lightning-layout-item padding="around-small" key={item.PostalRequestDate__c}>
+              <lightning-layout-item padding="around-small" key={item.Id}>
                 <lightning-card variant="Narrow" title={item.PostalRequestDate__c} icon-name="standard:date_input">
-                  <lightning-button-stateful
-                    label-when-off="完了にする"
-                    label-when-on="解除する"
-                    icon-name-when-off="utility:check"
-                    icon-name-when-on="utility:close"
-                    selected={item.Completed__c}
+                  <lightning-button
+                    class="slds-m-left_x-small"
+                    label="完了"
+                    title="郵送依頼を完了にする"
+                    icon-name="utility:check"
+                    value={item.Id}
+                    onclick={handleClick}
                     slot="actions">
-                  </lightning-button-stateful>
+                  </lightning-button>
                   <lightning-layout horizontal-align="spread">
                     <lightning-layout-item padding="around-small">
                       <lightning-input type="number" label="郵送依頼数" value={item.PostalRequestCount__c} read-only="true"></lightning-input>
                     </lightning-layout-item>
                     <lightning-layout-item padding="around-small">
-                      <lightning-input type="number" label="発送数" value={item.IssueCount__c}></lightning-input>
+                      <lightning-input type="number" label="発送数" min="1" name={item.Id} value={item.IssueCount__c} onchange={handleChange}></lightning-input>
                     </lightning-layout-item>
                   </lightning-layout>
                 </lightning-card>
@@ -60,28 +62,12 @@
       <lightning-tab label="完了">
         <lightning-layout horizontal-align="spread" multiple-rows="true">
           <template if:true={postalRequestsCompleted.data}>
-            <template for:each={postalRequestsCompleted.data} for:item="item">
-              <lightning-layout-item padding="around-small" key={item.PostalRequestDate__c}>
-                <lightning-card variant="Narrow" title={item.PostalRequestDate__c} icon-name="standard:date_input">
-                  <lightning-button-stateful
-                    label-when-off="完了にする"
-                    label-when-on="解除する"
-                    icon-name-when-off="utility:check"
-                    icon-name-when-on="utility:close"
-                    selected={item.Completed__c}
-                    slot="actions">
-                  </lightning-button-stateful>
-                  <lightning-layout horizontal-align="spread">
-                    <lightning-layout-item padding="around-small">
-                      <lightning-input type="number" label="郵送依頼数" value={item.PostalRequestCount__c} read-only="true"></lightning-input>
-                    </lightning-layout-item>
-                    <lightning-layout-item padding="around-small">
-                      <lightning-input type="number" label="発送数" value={item.IssueCount__c} read-only="true"></lightning-input>
-                    </lightning-layout-item>
-                  </lightning-layout>
-                </lightning-card>
-              </lightning-layout-item>
-            </template>
+            <lightning-datatable
+              key-field="Id"
+              columns={columns}
+              data={postalRequestsCompleted.data}
+              hide-checkbox-column="true">
+          </lightning-datatable>
           </template>
         </lightning-layout>
       </lightning-tab>

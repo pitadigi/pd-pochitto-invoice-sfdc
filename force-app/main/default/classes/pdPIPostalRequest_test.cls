@@ -34,20 +34,9 @@ class pdPIPostalRequest_test {
 
         Test.startTest();
 
-        RestRequest req = new RestRequest();
-        RestResponse res = new RestResponse();
+        List<PostalRequest__c> lstPostalRequest = pdPIPostalRequest.getPostalRequest();
 
-        req.requestURI = '/services/apexrest/pi-postal-request';
-        req.httpMethod = 'GET';
-
-        RestContext.request = req;
-        RestContext.response = res;
-
-        String ret = pdPIPostalRequest.getPostalRequest();
-
-        Map<String, Object> m = (Map<String, Object>)JSON.deserializeUntyped(ret);
-        List<Object> results = (List<Object>)m.get('postal_request');
-        System.assertEquals(results.size(), 1, '取得した郵送依頼が１件ではありません');
+        System.assertEquals(lstPostalRequest.size(), 1, '取得した郵送依頼が１件ではありません');
 
         Test.stopTest();
     }

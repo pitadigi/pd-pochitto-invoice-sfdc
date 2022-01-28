@@ -1,0 +1,75 @@
+<template>
+  <div class="slds-page-header" role="banner">
+    <div class="slds-page-header__row">
+      <div class="slds-page-header__col-title">
+        <div class="slds-media">
+          <div class="slds-media__figure">
+            <lightning-icon icon-name="custom:custom105" size="large" alternative-text="郵送依頼"></lightning-icon>
+          </div>
+          <div class="slds-media__body">
+            <div class="slds-page-header__name">
+              <div class="slds-page-header__name-title">
+                <h1>
+                  <span class="slds-page-header__title slds-truncate" title="郵送依頼">郵送依頼</span>
+                </h1>
+              </div>
+            </div>
+            <p class="slds-page-header__name-meta">発送待ち 2日分</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>    
+  <div class="c-container">
+    <lightning-tabset>
+      <lightning-tab label="発送待ち">
+        <lightning-layout horizontal-align="spread" multiple-rows="true">
+          <lightning-layout-item padding="around-small">
+            <lightning-card variant="Narrow" title="2022-01-12" icon-name="standard:date_input">
+              <lightning-button-stateful
+                label-when-off="完了にする"
+                label-when-on="解除する"
+                icon-name-when-off="utility:check"
+                icon-name-when-on="utility:close"
+                selected={unSelected}
+                slot="actions">
+              </lightning-button-stateful>
+              <lightning-layout horizontal-align="spread">
+                <lightning-layout-item padding="around-small">
+                  <lightning-input type="number" label="郵送依頼数" value="10" read-only="true"></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item padding="around-small">
+                  <lightning-input type="number" label="発送数" value="10"></lightning-input>
+                </lightning-layout-item>
+              </lightning-layout>
+            </lightning-card>
+          </lightning-layout-item>
+        </lightning-layout>
+      </lightning-tab>
+      <lightning-tab label="完了">
+        <lightning-layout horizontal-align="spread" multiple-rows="true">
+          <lightning-layout-item padding="around-small">
+            <lightning-card variant="Narrow" title="2022-01-12" icon-name="standard:date_input">
+              <lightning-button-stateful
+                label-when-off="完了にする"
+                label-when-on="解除する"
+                icon-name-when-off="utility:check"
+                icon-name-when-on="utility:close"
+                selected={selected}
+                slot="actions">
+              </lightning-button-stateful>
+              <lightning-layout horizontal-align="spread">
+                <lightning-layout-item padding="around-small">
+                  <lightning-input type="number" label="郵送依頼数" value="10" read-only="true"></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item padding="around-small">
+                  <lightning-input type="number" label="発送数" value="10" read-only="true"></lightning-input>
+                </lightning-layout-item>
+              </lightning-layout>
+            </lightning-card>
+          </lightning-layout-item>
+        </lightning-layout>
+      </lightning-tab>
+  </lightning-tabset>
+</div>
+</template>

@@ -1,5 +1,4 @@
-@RestResource(urlMapping='/pi-postal-request/*')
-global with sharing class pdPIPostalRequest {
+public with sharing class pdPIPostalRequest {
     public virtual class BaseException extends Exception {}
     public class OtherException extends BaseException {}
 
@@ -65,26 +64,17 @@ global with sharing class pdPIPostalRequest {
     /**
      * 過去30回分の郵送依頼情報を取得する
      */
-    @HttpGet
-    global static String getPostalRequest() {
-        List<PostalRequest__c> lstPostalRequest = [SELECT PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
-                                                    FROM PostalRequest__c ORDER BY PostalRequestDate__c DESC LIMIT 30];
-
-        System.JSONGenerator j = JSON.createGenerator(false);
-        j.writeStartObject();
-        j.writeFieldName('postal_request');
-        j.writeStartArray();
-        for (PostalRequest__c postalRequest : lstPostalRequest) {
-            j.writeStartObject();
-            j.writeDateField('postal_request_date', postalRequest.PostalRequestDate__c);
-            j.writeNumberField('postal_request_count', (postalRequest.PostalRequestCount__c == null) ? 0 : postalRequest.PostalRequestCount__c);
-            j.writeNumberField('issue_count', (postalRequest.IssueCount__c == null) ? 0 : postalRequest.IssueCount__c);
-            j.writeBooleanField('completed', (postalRequest.Completed__c == null) ? false : postalRequest.Completed__c);
-            j.writeEndObject();
+    @AuraEnabled(cacheable=true)
+    public static List<PostalRequest__c> getPostalRequest(Boolean completed) {
+        List<PostalRequest__c> lstPostalRequest;
+        if (completed) {
+            lstPostalRequest = [SELECT PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
+                                FROM PostalRequest__c WHERE Completed__c=:completed ORDER BY PostalRequestDate__c DESC LIMIT 30];
+        } else {
+            lstPostalRequest = [SELECT PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
+                                FROM PostalRequest__c WHERE Completed__c=:completed ORDER BY PostalRequestDate__c LIMIT 1000];
         }
-        j.writeEndArray();
-        j.writeEndObject();
 
-        return j.getAsString();
+        return lstPostalRequest;
     }
 }

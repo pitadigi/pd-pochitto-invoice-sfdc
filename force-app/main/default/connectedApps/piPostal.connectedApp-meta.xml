@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConnectedApp xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contactEmail>kmatae@pitadigi.jp</contactEmail>
+    <label>ポチッと請求-郵送</label>
+    <oauthConfig>
+        <callbackUrl>http://localhost/pi-postal</callbackUrl>
+        <certificate>MIICmDCCAYACCQCqZJLx+n9PATANBgkqhkiG9w0BAQsFADANMQswCQYDVQQGEwJqcDAgFw0yMjAxMjYwNzIxNTlaGA8yMTIyMDEwMjA3MjE1OVowDTELMAkGA1UEBhMCanAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD1EjXYobU3+ZEEN5wm8DhUeCB856xY3vexpojFF/FZUtbNCFDqo2+qDPf3YYijPXFM+HRp7FlOoeRKwsJvk3Vo6oOSSJG0q6zZwMbI/UcLD24cbcSYt0zWvXjBpGuWcJF70eHFgzjjcg8kd/6ODOZ0VwBn318XOIDlCj6qy91vyIST5KYe9SI0TjJ4cmZuLaioHQbPXMHjo5LiVFrCN01O/U4VQExMcnuH58RCe+X47L2N36TkpDG7wot2Qvele9TODNroCLTJ6FpTTdKOHhTRBToSP96SlhLkct4mIDrhsogStXRmCbLZGrH6eBZOaidrfqxWiD5kPqzsY2QranQ7AgMBAAEwDQYJKoZIhvcNAQELBQADggEBAFSDaNsmFnPcRoKyLR6K2/TrBwbup2ObO5EbXhFouLm4lNho+dq1/kMFh4crbg09eveFtEENPEh8w7gaeEl8zw+tuRtIRxnnajAIQJVLjcW01HTuqbljaCFeXYB+wDk+amN6m8yEzsJl8+fS3/E+qGWhgMYMsHwgVF2blWrBQfyqc65+c4m4nPyHekoouRiXjivm6Tv8r0xpJjdr5yl/+wDnTLGxjYcE/grhyCO6KDzmZQzFlTd0f39mgYR5b+FkSyGbJqcUU46x7MxG/h/hs9Fp0xW+m6l41vRyCwdDboLd4JYudsDCYkfhFb284bDC5P+ScC61YtSMyU2Bu1ZErEo=</certificate>
+        <consumerKey>3MVG9Gdzj3taRxuPJg2R9Jv0NVtUrew3FFv1U9OoBTcb6j3.RpVbqYBOYKk5dH_EBkFagnC2UIcWRR8qF4TL0</consumerKey>
+        <isAdminApproved>true</isAdminApproved>
+        <isConsumerSecretOptional>false</isConsumerSecretOptional>
+        <isIntrospectAllTokens>false</isIntrospectAllTokens>
+        <isSecretRequiredForRefreshToken>true</isSecretRequiredForRefreshToken>
+        <scopes>Api</scopes>
+    </oauthConfig>
+    <oauthPolicy>
+        <ipRelaxation>ENFORCE</ipRelaxation>
+        <refreshTokenPolicy>infinite</refreshTokenPolicy>
+    </oauthPolicy>
+    <profileName>システム管理者</profileName>
+</ConnectedApp>

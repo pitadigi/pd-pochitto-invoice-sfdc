@@ -14,60 +14,75 @@
                 </h1>
               </div>
             </div>
-            <p class="slds-page-header__name-meta">発送待ち 2日分</p>
+            <p class="slds-page-header__name-meta">
+              <template if:true={isCompleted}>
+                郵送依頼はすべて完了
+              </template>
+              <template if:false={isCompleted}>
+                発送待ち郵送依頼 {requestCount} 日分
+              </template>
+            </p>
           </div>
         </div>
       </div>
     </div>
   </div>    
-  <div class="c-container">
+  <div class="c-container slds-theme_default">
     <lightning-tabset>
       <lightning-tab label="発送待ち">
         <lightning-layout horizontal-align="spread" multiple-rows="true">
-          <lightning-layout-item padding="around-small">
-            <lightning-card variant="Narrow" title="2022-01-12" icon-name="standard:date_input">
-              <lightning-button-stateful
-                label-when-off="完了にする"
-                label-when-on="解除する"
-                icon-name-when-off="utility:check"
-                icon-name-when-on="utility:close"
-                selected={unSelected}
-                slot="actions">
-              </lightning-button-stateful>
-              <lightning-layout horizontal-align="spread">
-                <lightning-layout-item padding="around-small">
-                  <lightning-input type="number" label="郵送依頼数" value="10" read-only="true"></lightning-input>
-                </lightning-layout-item>
-                <lightning-layout-item padding="around-small">
-                  <lightning-input type="number" label="発送数" value="10"></lightning-input>
-                </lightning-layout-item>
-              </lightning-layout>
-            </lightning-card>
-          </lightning-layout-item>
+          <template if:true={postalRequests.data}>
+            <template for:each={postalRequests.data} for:item="item">
+              <lightning-layout-item padding="around-small" key={item.PostalRequestDate__c}>
+                <lightning-card variant="Narrow" title={item.PostalRequestDate__c} icon-name="standard:date_input">
+                  <lightning-button-stateful
+                    label-when-off="完了にする"
+                    label-when-on="解除する"
+                    icon-name-when-off="utility:check"
+                    icon-name-when-on="utility:close"
+                    selected={item.Completed__c}
+                    slot="actions">
+                  </lightning-button-stateful>
+                  <lightning-layout horizontal-align="spread">
+                    <lightning-layout-item padding="around-small">
+                      <lightning-input type="number" label="郵送依頼数" value={item.PostalRequestCount__c} read-only="true"></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item padding="around-small">
+                      <lightning-input type="number" label="発送数" value={item.IssueCount__c}></lightning-input>
+                    </lightning-layout-item>
+                  </lightning-layout>
+                </lightning-card>
+              </lightning-layout-item>
+            </template>
+          </template>
         </lightning-layout>
       </lightning-tab>
       <lightning-tab label="完了">
         <lightning-layout horizontal-align="spread" multiple-rows="true">
-          <lightning-layout-item padding="around-small">
-            <lightning-card variant="Narrow" title="2022-01-12" icon-name="standard:date_input">
-              <lightning-button-stateful
-                label-when-off="完了にする"
-                label-when-on="解除する"
-                icon-name-when-off="utility:check"
-                icon-name-when-on="utility:close"
-                selected={selected}
-                slot="actions">
-              </lightning-button-stateful>
-              <lightning-layout horizontal-align="spread">
-                <lightning-layout-item padding="around-small">
-                  <lightning-input type="number" label="郵送依頼数" value="10" read-only="true"></lightning-input>
-                </lightning-layout-item>
-                <lightning-layout-item padding="around-small">
-                  <lightning-input type="number" label="発送数" value="10" read-only="true"></lightning-input>
-                </lightning-layout-item>
-              </lightning-layout>
-            </lightning-card>
-          </lightning-layout-item>
+          <template if:true={postalRequestsCompleted.data}>
+            <template for:each={postalRequestsCompleted.data} for:item="item">
+              <lightning-layout-item padding="around-small" key={item.PostalRequestDate__c}>
+                <lightning-card variant="Narrow" title={item.PostalRequestDate__c} icon-name="standard:date_input">
+                  <lightning-button-stateful
+                    label-when-off="完了にする"
+                    label-when-on="解除する"
+                    icon-name-when-off="utility:check"
+                    icon-name-when-on="utility:close"
+                    selected={item.Completed__c}
+                    slot="actions">
+                  </lightning-button-stateful>
+                  <lightning-layout horizontal-align="spread">
+                    <lightning-layout-item padding="around-small">
+                      <lightning-input type="number" label="郵送依頼数" value={item.PostalRequestCount__c} read-only="true"></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item padding="around-small">
+                      <lightning-input type="number" label="発送数" value={item.IssueCount__c} read-only="true"></lightning-input>
+                    </lightning-layout-item>
+                  </lightning-layout>
+                </lightning-card>
+              </lightning-layout-item>
+            </template>
+          </template>
         </lightning-layout>
       </lightning-tab>
   </lightning-tabset>

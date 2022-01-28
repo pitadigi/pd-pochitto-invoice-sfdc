@@ -4,6 +4,7 @@
     <isExposed>true</isExposed>
     <masterLabel>郵送依頼</masterLabel>
     <targets>
+        <target>lightning__HomePage</target>
         <target>lightning__AppPage</target>
         <target>lightningCommunity__Page</target>
     </targets>

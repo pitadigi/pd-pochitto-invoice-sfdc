@@ -34,7 +34,7 @@ class pdPIPostalRequest_test {
 
         Test.startTest();
 
-        List<PostalRequest__c> lstPostalRequest = pdPIPostalRequest.getPostalRequest();
+        List<PostalRequest__c> lstPostalRequest = pdPIPostalRequest.getPostalRequest(false);
 
         System.assertEquals(lstPostalRequest.size(), 1, '取得した郵送依頼が１件ではありません');
 

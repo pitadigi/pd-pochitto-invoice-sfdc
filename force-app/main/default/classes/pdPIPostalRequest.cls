@@ -1,80 +1,99 @@
 public with sharing class pdPIPostalRequest {
-    public virtual class BaseException extends Exception {}
-    public class OtherException extends BaseException {}
-
-    @future(callout = true)
-    public static void aggregatePostal() {
-        String accessToken = pdPIAuth0.getAccessToken('API');
-
-        Date yesterday = Date.today().addDays(-1);
-
-        Http http = new Http();
-        HttpRequest req = new HttpRequest();
-        req.setMethod('GET');
-        String param = 'contract_id=build_user_env' + 
-            '&targetDate=' + String.valueOf(yesterday);
-        req.setEndpoint('callout:PochittoInvoiceApi/api/maintenance/postal?' + param);
-        req.setHeader('content-type', 'application/json');
-        req.setHeader('authorization', accessToken);
-
-        HttpResponse res = http.send(req);
-        if (res.getStatusCode() == 200) {
-            List<PostalRequest__c> del = [SELECT Id FROM PostalRequest__c WHERE PostalRequestDate__c=:yesterday];
-            if (del.size() != 0) {
-                delete del;
-            }
-
-            Map<String, Object> mapRes = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
-            String result = (String)mapRes.get('result');
-            if (result == 'OK') {
-                List<Object> lstIssuePostal = (List<Object>)mapRes.get('issuePostal');
-                if (lstIssuePostal.size() != 0) {
-                    PostalRequest__c postalRequest = new PostalRequest__c();
-                    postalRequest.PostalRequestDate__c = yesterday;
-                    insert postalRequest;
-                    List<PostalRequestDetail__c> lstPostalRequestDetail = new List<PostalRequestDetail__c>();
-                    for (Object obj : lstIssuePostal) {
-                        Map<String,Object> item = (Map<String,Object>)obj;
-                        PostalRequestDetail__c postalRequestDetail = new PostalRequestDetail__c();
-                        postalRequestDetail.PostalRequest__c = postalRequest.Id;
-                        postalRequestDetail.Name = (String)item.get('contractId');
-                        postalRequestDetail.PostalRequestCount__c = (Long)item.get('issueCount');
-                        lstPostalRequestDetail.add(postalRequestDetail);
-                    }
+  public virtual class BaseException extends Exception {}
+  public class OtherException extends BaseException {}
+  
+  @future(callout = true)
+  public static void aggregatePostal() {
+    String accessToken = pdPIAuth0.getAccessToken('API');
     
-                    insert lstPostalRequestDetail;
-                }
-            } else {
-                throw new OtherException('郵送依頼状況取得でエラーが発生しました: ' + (String)mapRes.get('errorMessage'));
-            }
+    Date yesterday = Date.today().addDays(-1);
+    
+    Http http = new Http();
+    HttpRequest req = new HttpRequest();
+    req.setMethod('GET');
+    String param = 'contract_id=build_user_env' + 
+    '&targetDate=' + String.valueOf(yesterday);
+    req.setEndpoint('callout:PochittoInvoiceApi/api/maintenance/postal?' + param);
+    req.setHeader('content-type', 'application/json');
+    req.setHeader('authorization', accessToken);
+    
+    HttpResponse res = http.send(req);
+    if (res.getStatusCode() == 200) {
+      List<PostalRequest__c> del = [SELECT Id FROM PostalRequest__c WHERE PostalRequestDate__c=:yesterday];
+      if (del.size() != 0) {
+        delete del;
+      }
+      
+      Map<String, Object> mapRes = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
+      String result = (String)mapRes.get('result');
+      if (result == 'OK') {
+        List<Object> lstIssuePostal = (List<Object>)mapRes.get('issuePostal');
+        if (lstIssuePostal.size() != 0) {
+          PostalRequest__c postalRequest = new PostalRequest__c();
+          postalRequest.PostalRequestDate__c = yesterday;
+          insert postalRequest;
+          List<PostalRequestDetail__c> lstPostalRequestDetail = new List<PostalRequestDetail__c>();
+          for (Object obj : lstIssuePostal) {
+            Map<String,Object> item = (Map<String,Object>)obj;
+            PostalRequestDetail__c postalRequestDetail = new PostalRequestDetail__c();
+            postalRequestDetail.PostalRequest__c = postalRequest.Id;
+            postalRequestDetail.Name = (String)item.get('contractId');
+            postalRequestDetail.PostalRequestCount__c = (Long)item.get('issueCount');
+            lstPostalRequestDetail.add(postalRequestDetail);
+          }
+          
+          insert lstPostalRequestDetail;
         }
-        else {
-            throw new OtherException(pdPIPostalRequest.getApiErrorMessage(res.getBody()));
-        }
+      } else {
+        throw new OtherException('郵送依頼状況取得でエラーが発生しました: ' + (String)mapRes.get('errorMessage'));
+      }
     }
-
-    /**
-     * エラーメッセージを設定する
-    */
-    private static String getApiErrorMessage(String body) {
-        String errorMessage = '郵送依頼状況取得APIでエラーが発生しました: ' + body;
-        return errorMessage;
+    else {
+      throw new OtherException(pdPIPostalRequest.getApiErrorMessage(res.getBody()));
     }
-
-    /**
-     * 過去30回分の郵送依頼情報を取得する
-     */
-    @AuraEnabled(cacheable=true)
-    public static List<PostalRequest__c> getPostalRequest(Boolean completed) {
-        List<PostalRequest__c> lstPostalRequest;
-        if (completed) {
-            lstPostalRequest = [SELECT Id,PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
-                                FROM PostalRequest__c WHERE Completed__c=:completed ORDER BY PostalRequestDate__c DESC LIMIT 30];
-        } else {
-            lstPostalRequest = [SELECT Id,PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
-                                FROM PostalRequest__c WHERE Completed__c=:completed ORDER BY PostalRequestDate__c LIMIT 1000];
-        }
-
-        return lstPostalRequest;
+  }
+  
+  /**
+  * エラーメッセージを設定する
+  */
+  private static String getApiErrorMessage(String body) {
+    String errorMessage = '郵送依頼状況取得APIでエラーが発生しました: ' + body;
+    return errorMessage;
+  }
+  
+  /**
+  * 郵送依頼情報を取得する
+  */
+  @AuraEnabled(cacheable=true)
+  public static List<PostalRequest__c> getPostalRequest(Boolean completed) {
+    try {
+      List<PostalRequest__c> lstPostalRequest;
+      if (completed) {
+        lstPostalRequest = [SELECT Id,PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
+        FROM PostalRequest__c WHERE Completed__c=:completed ORDER BY PostalRequestDate__c DESC LIMIT 30];
+      } else {
+        lstPostalRequest = [SELECT Id,PostalRequestDate__c,PostalRequestCount__c,IssueCount__c,Completed__c
+        FROM PostalRequest__c WHERE Completed__c=:completed ORDER BY PostalRequestDate__c LIMIT 1000];
+      }
+      
+      return lstPostalRequest;
+    } catch (Exception e) {
+      throw new AuraHandledException(e.getMessage());
     }
+  }
+  
+  /**
+  * 郵送依頼を登録する
+  */
+  @AuraEnabled
+  public static void registPostalRequest(Id id, Long issueCount, Boolean completed){
+    try {
+      PostalRequest__c postalRequest = [SELECT Id,IssueCount__c,Completed__c FROM PostalRequest__c WHERE Id=:id LIMIT 1];
+      postalRequest.IssueCount__c = issueCount;
+      postalRequest.Completed__c = completed;
+      update postalRequest;
+    } catch (Exception e) {
+      throw new AuraHandledException(e.getMessage());
+    }
+  }
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>API</label>
+    <protected>false</protected>
+    <values>
+        <field>Audience__c</field>
+        <value xsi:type="xsd:string">https://pi-web-pr-st.azurewebsites.net</value>
+    </values>
+    <values>
+        <field>ClientId__c</field>
+        <value xsi:type="xsd:string">DRKezqlKrXE7DZof2qeCdcGfJKSFuQ12</value>
+    </values>
+    <values>
+        <field>GrantType__c</field>
+        <value xsi:type="xsd:string">client_credentials</value>
+    </values>
+    <values>
+        <field>Secret__c</field>
+        <value xsi:type="xsd:string">iCeLx8Kz1vJZ5AM_kzW7VU7HBm6dvhjk9FtLjnIGDumiwzhLtUexdOX3e4mzQDAO</value>
+    </values>
+    <values>
+        <field>Url__c</field>
+        <value xsi:type="xsd:string">callout:Auth0/oauth/token</value>
+    </values>
+</CustomMetadata>

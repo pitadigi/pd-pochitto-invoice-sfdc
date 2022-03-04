@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>SVF</label>
+    <protected>false</protected>
+    <values>
+        <field>ClientId__c</field>
+        <value xsi:type="xsd:string">SVFULHUTCINVJQUDAJQHSHDIDUIFLBZE</value>
+    </values>
+    <values>
+        <field>Locale__c</field>
+        <value xsi:type="xsd:string">ja</value>
+    </values>
+    <values>
+        <field>PrivateKey__c</field>
+        <value xsi:type="xsd:string">MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCTGbk3lw/Eaqy5
+o78iIWZZKQmFsISmF+uxAQ1eFdcdQ0hH64ikENyJdAg2Pl9dtYILhuJPQgJHJGzf
+lqFK0M65FkeKxorCJPa81XI8YaoTHEiIGoULAT4lLM65ELo3W9YTIoKuAgZcgq/W
+sGPP1jwjlbUnSc72GWssut6LKXjTCNIW8/TvVT47aq7FnLZd9Xi6pRki++gQDTXp
+ei0K2eEh9nWCl2/KWL0AApfTiCSKzIuno67wqwqMc1GoU8sYf5vmlP9VnJpoaaVf
+p4UE6KKI16hdwMIDmObEP+7QuTPf03KYJj2ikOJBCvdVv5WXiRR/cATDAvb5NTJ1
+9/V9IL4nAgMBAAECggEAe59hphNA//v6fuTbS26wWfv/8aegQwnVXOMafdhy+TfD
+NhX+tospHCc0g4m1kcZprRBFfwBlc65sBRfNI1gKc0gDBeDHWlPAPIBRSed2DCt3
+1VIcP1xjAtD+Rk+Ff+KhLWGSW3R+Lh7yccW5jEBqOCmnnYYM9Yv1IxlEz8Uhso/v
+WRoFVhXIfJXZq8wtBxSGnP480fRl055ydWw9v39U+o4TVg/m6GCBM2FMe7bv25U5
+NLFv01OmpBujsBDHE/a6RPakkWCLIemKBKeWn3H/NOEpoeWlRGlgool7v1qJbilR
+exWpwK87zSnmU9p2wpV8WCRYn7SgqXBTyxYxpD7mwQKBgQDOizVZWRTmEn3Kmg0G
+/jzV3DuR+XIDWNqvdjgvRp0xwn9GxJXvIseZ8IqenNsZ5m/sBZI01SdaxVUtg/qV
+D7fRpD0P+bkgg9SqEHmpKCNleEAmUb4hnn2XCwCYy4IulMX+DOkdlm9NUIl6qb+l
+Pd9h2DgdIPh++8SZQ0mh9mTfxwKBgQC2Ur1DL3Wc5eKYPc9n4/qE2D62C88MRmXC
+meE1gv3+p6+/7X03An6d0f77JahTZ5fNqbmp8Qik15M8Sjfxw96Yz2N80AYhKhS5
+WkyP/zgGATWyazSXmcCENHwlHU3sLTQ7GNAM6OiNgWL01riJmbnENxhedIawwsW4
+tbH9fTPuoQKBgCKBpV8Q/+nUKwnfJNAHR5ifG6CuoPqoLJjl0ksrq/V1PhhPnZD/
+KYOxaSdIo143Xnl7EMsc1V9X2nwpMYMXxikTHFR/7wrcm3nyGLFHEGrSZT1BqNcr
+CGZkoyvjzBMGLfHcrFGSIXQ0QVOp6mer55cMLYvIR1vHqjfEwxd4969fAoGAQiUC
+RL2TDbjY3CKQfEBZQpixJ5phIzLm+BKbga5kN17eg+LE6pAdH2Rv/O1Mg/WxPQu2
+L9EiMauD3vuOEEffGdEjZsSRdLavjg8Ud6k/ye3mbTQ3gEhnb48a+twGyQgdStNV
+p1lYBP5LyEed602591WFob7knnwK/1frmusxTAECgYA9mNlGEVpEYBYADeNZ0ZYk
+01n64kbCHw7GEuymRmPHtYiF8JBPvwWezaFGwgpBi16HrqY2mXO1Af55cZofRmCE
+o2rc2OaYt0C9r/yk/tUZW/pJYDZsi4AvBHcZO3Blh9+/1w9QsAUBaWeX3LdGcuUj
+zSqqc/Mc0zk2X/O7CASthg==</value>
+    </values>
+    <values>
+        <field>Secret__c</field>
+        <value xsi:type="xsd:string">H4ztwKl53lmGfCewS1nbX4Mc3nSDpnVqUuu2B8jeVD3SFUUzpUeEs94khDry8fN0</value>
+    </values>
+    <values>
+        <field>TimeZone__c</field>
+        <value xsi:type="xsd:string">Asia/Tokyo</value>
+    </values>
+    <values>
+        <field>UserId__c</field>
+        <value xsi:type="xsd:string">mAI1iaXFbbIy5l4i7foER4IFcubsAD</value>
+    </values>
+    <values>
+        <field>UserName__c</field>
+        <value xsi:type="xsd:string">I8XZdIF8rsqlmgvRlkAeIMIPPRt4e7</value>
+    </values>
+</CustomMetadata>

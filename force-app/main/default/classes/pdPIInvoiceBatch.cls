@@ -29,6 +29,7 @@ public with sharing class pdPIInvoiceBatch implements Database.Batchable<sObject
                 WHERE Product2.ProductCode = 'PI0001'
                     AND Order.ContractId != null
                     AND Order.Contract.NoInvoice__c != true
+                    AND Order.Contract.ServiceInDate__c != null
                     AND ((Order.Contract.Status = 'Activated' AND Order.Contract.InvoiceStartDate__c <= :this.startDate) OR (Order.Contract.Status = 'Closed' AND Order.Contract.EndDate >= :this.startDate AND Order.Contract.EndDate <= :this.endDate))
             ]
         );

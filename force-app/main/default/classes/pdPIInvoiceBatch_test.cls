@@ -45,10 +45,13 @@ class pdPIInvoiceBatch_test {
         );
         insert contact;
 
+        Date today = Date.today();
+        Date startDate = Date.newInstance(today.year(), today.month(), 1).addMonths(-1);
+        Date endDate = startDate.addMonths(1).addDays(-1);
         Contract contract = new Contract(
             Name = '契約',
             AccountId = account.Id,
-            StartDate = Date.today().addDays(-60),
+            StartDate = startDate,
             Status = 'Draft',
             ContractId__c = 'test',
             piDeletedUserEnv__c = false,
@@ -58,17 +61,18 @@ class pdPIInvoiceBatch_test {
             BillingCity = '滝沢市',
             BillingStreet = '巣子１５２番地４０９滝沢市第２イノベーションセンター',
             IsFirstBilled__c = false,
-            TrialSpanMonths__c = 1
+            TrialSpanMonths__c = 0,
+            ServiceInDate__c = startDate
         );
         insert contract;
         contract.Status = 'Activated';
-        contract.EndDate = Date.today().addDays(-33);
+        contract.EndDate = endDate;
         update contract;
 
         Order order = new Order(
             ContractId = contract.Id,
             Status = 'Draft',
-            EffectiveDate = Date.today().addDays(-60),
+            EffectiveDate = startDate,
             Pricebook2Id = pricebook2.Id
         );
         insert order;
